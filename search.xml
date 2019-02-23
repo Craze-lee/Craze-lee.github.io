@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title><![CDATA[Redis读书笔记一：简单动态字符串]]></title>
+    <url>%2F2019%2F02%2F23%2FRedis%2F%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%2F</url>
+    <content type="text"><![CDATA[简单动态字符串 结构12345678struct sdshdr &#123; // 记录已使用字节的数量 long len; // 记录未使用的字节数量 long free; // 保存字符串 char buf[];&#125;; buf以&#39;\0&#39;为作为字符串结束符，为了能使用C语言本身的库 SDS设计对比C语言字符串的优势： 获取字符串长度的时间复杂度 O(1) 避免缓冲区溢出情况 在拼接扩展字符串时，先检测free是否有足够的容量加载新字符，无则新分配内存 减少修改字符串带来的内存重新分配次数： 空间预分配：在做空间扩展时，不仅会分配必须的内存大小，还会额外分配未使用空间。额外分配规则： 如果分配后，sds-&gt;len大小小于1M，将分配额外空间大小为sds-&gt;len。例如：修改后len大小为13，则会分配free=13，最终buf的字节长度为 13(len)+13(fee)+1(&#39;\0&#39;) = 27; 如果分配后，sds-&gt;len大小 大于 1M，将分配额外空间大小为1M。例如，修改后len大小为30M，则会分配free=1M，最终buf的字节长度为 30M + 1M +1byte 惰性空间释放 避免内存重新分配 为将来可能有的增长操作提供了优化 二进制安全 在C语言中，如果存在&#39;\0&#39;，则会终止取值。二进制的内容可能存在该字符，所以在C语言中是不安全的，但sds是根据len取值 兼容部分 C 字符串函数。]]></content>
+      <categories>
+        <category>Redis</category>
+      </categories>
+      <tags>
+        <tag>Redis</tag>
+        <tag>读书笔记</tag>
+      </tags>
+  </entry>
+</search>
