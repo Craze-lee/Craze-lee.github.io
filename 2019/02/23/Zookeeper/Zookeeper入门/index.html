@@ -96,24 +96,29 @@
 
 
 
-  <meta name="description" content="做个有温度的人">
-<meta name="keywords" content="crazelee 技术 经济">
-<meta property="og:type" content="website">
-<meta property="og:title" content="念念不忘 必有回响">
-<meta property="og:url" content="http://craze-lee.github.io/archives/2019/index.html">
+  <meta name="description" content="Zookeeper文件系统 + 通知机制 特点 一个领导者(Leader)，多个跟随者(Follower)组成的集群 集群中只要有半数以上节点存活，Zookeeper集群就能正常服务 全局数据一致性，每个server保存一份相同的副本，client无论链接哪个server，得到的数据都是一致的 更新请求顺序执行，来自同一个client的请求按顺序执行 数据更新原子性，一次数据更新要么成功要么失败">
+<meta name="keywords" content="Zookeeper,分布式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Zookeeper 入门介绍">
+<meta property="og:url" content="http://craze-lee.github.io/2019/02/23/Zookeeper/Zookeeper入门/index.html">
 <meta property="og:site_name" content="念念不忘 必有回响">
-<meta property="og:description" content="做个有温度的人">
+<meta property="og:description" content="Zookeeper文件系统 + 通知机制 特点 一个领导者(Leader)，多个跟随者(Follower)组成的集群 集群中只要有半数以上节点存活，Zookeeper集群就能正常服务 全局数据一致性，每个server保存一份相同的副本，client无论链接哪个server，得到的数据都是一致的 更新请求顺序执行，来自同一个client的请求按顺序执行 数据更新原子性，一次数据更新要么成功要么失败">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://craze-lee.github.io/images/15510641008952.jpg">
+<meta property="og:image" content="http://craze-lee.github.io/images/15510645270163.jpg">
+<meta property="og:image" content="http://craze-lee.github.io/images/15510811520116.jpg">
+<meta property="og:updated_time" content="2019-02-25T10:01:35.771Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="念念不忘 必有回响">
-<meta name="twitter:description" content="做个有温度的人">
+<meta name="twitter:title" content="Zookeeper 入门介绍">
+<meta name="twitter:description" content="Zookeeper文件系统 + 通知机制 特点 一个领导者(Leader)，多个跟随者(Follower)组成的集群 集群中只要有半数以上节点存活，Zookeeper集群就能正常服务 全局数据一致性，每个server保存一份相同的副本，client无论链接哪个server，得到的数据都是一致的 更新请求顺序执行，来自同一个client的请求按顺序执行 数据更新原子性，一次数据更新要么成功要么失败">
+<meta name="twitter:image" content="http://craze-lee.github.io/images/15510641008952.jpg">
 
 
 
 
 
 
-  <link rel="canonical" href="http://craze-lee.github.io/archives/2019/">
+  <link rel="canonical" href="http://craze-lee.github.io/2019/02/23/Zookeeper/Zookeeper入门/">
 
 
 
@@ -123,7 +128,7 @@
   };
 </script>
 
-  <title>归档 | 念念不忘 必有回响</title>
+  <title>Zookeeper 入门介绍 | 念念不忘 必有回响</title>
   
 
 
@@ -171,7 +176,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -247,7 +252,7 @@
         
         
           
-          <li class="menu-item menu-item-归档 menu-item-active">
+          <li class="menu-item menu-item-归档">
 
     
     
@@ -352,174 +357,313 @@
           
             
 
-    
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-    
-
-  
-
-
           
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-      
-      <span class="archive-page-counter">
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/02/23/Zookeeper/Zookeeper入门/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Craze lee">
+      <meta itemprop="description" content="做个有温度的人">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="念念不忘 必有回响">
+    </span>
+
+    
+      <header class="post-header">
+
         
         
+          <h1 class="post-title" itemprop="name headline">Zookeeper 入门介绍
+
+              
+            
+          </h1>
         
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-23 11:54:08" itemprop="dateCreated datePublished" datetime="2019-02-23T11:54:08+08:00">2019-02-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-02-25 18:01:35" itemprop="dateModified" datetime="2019-02-25T18:01:35+08:00">2019-02-25</time>
+              
+            
+          </span>
+
           
-        
-        嗯..! 目前共计 3 篇日志。 继续努力。
-      </span>
-      
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Zookeeper/" itemprop="url" rel="index"><span itemprop="name">Zookeeper</span></a></span>
 
-      
-
-        
-        
-        
-
-        
+                
+                
+              
+            </span>
           
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2019">2019</h1>
-          </div>
-        
-        
 
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/2019/02/23/Zookeeper/Zookeeper入门/" itemprop="url">
+          
             
-              <span itemprop="name">Zookeeper 入门介绍</span>
             
-          </a>
-        
-      </h2>
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2019/02/23/Zookeeper/Zookeeper入门/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/02/23/Zookeeper/Zookeeper入门/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-02-23T11:54:08+08:00" content="2019-02-23">
-          02-23
-        </time>
-      </div>
+          
+          
 
-    </header>
-  </article>
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
 
+          
 
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/2019/02/23/每日一面/服务端面试题（汇总）/" itemprop="url">
-            
-              <span itemprop="name">服务端面试题集</span>
-            
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-02-23T11:54:08+08:00" content="2019-02-23">
-          02-23
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/2019/02/23/Redis/简单动态字符串/" itemprop="url">
-            
-              <span itemprop="name">Redis读书笔记一：简单动态字符串</span>
-            
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-02-23T10:59:08+08:00" content="2019-02-23">
-          02-23
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+      
+        <h2 id="Zookeeper"><a href="#Zookeeper" class="headerlink" title="Zookeeper"></a>Zookeeper</h2><p>文件系统 + 通知机制</p>
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ol>
+<li>一个领导者(Leader)，多个跟随者(Follower)组成的集群</li>
+<li>集群中只要有半数以上节点存活，Zookeeper集群就能正常服务</li>
+<li>全局数据一致性，每个server保存一份相同的副本，client无论链接哪个server，得到的数据都是一致的</li>
+<li>更新请求顺序执行，来自同一个client的请求按顺序执行</li>
+<li>数据更新<strong>原子性</strong>，一次数据更新要么成功要么失败</li>
+<li>实时性，在一定时间范围内，client能读到最新数据</li>
+</ol>
+<p><img src="/images/15510641008952.jpg" alt></p>
+<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>Zookeeper数据模型的结构与<strong>Unix文件系统很类似</strong>，整体上可看作是<strong>一棵树</strong>，每个节点称作一个ZNode。每个ZNode默认能存储<strong>1MB数据</strong>，每个ZNode都可以通过其<strong>路径唯一标识</strong>。</p>
+<p><img src="/images/15510645270163.jpg" alt></p>
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><ol>
+<li>分布式锁</li>
+<li>服务注册和发现<ul>
+<li>利用Znode和Watcher，可以实现分布式服务的注册和发现。最著名的应用就是阿里的分布式RPC框架Dubbo。</li>
+</ul>
+</li>
+<li>共享配置和状态信息<ul>
+<li>Redis的分布式解决方案Codis（豌豆荚），就利用了Zookeeper来存放数据路由表和 codis-proxy 节点的元信息。同时 codis-config 发起的命令都会通过 ZooKeeper 同步到各个存活的 codis-proxy。 </li>
+</ul>
+</li>
+</ol>
+<h2 id="选举机制"><a href="#选举机制" class="headerlink" title="选举机制"></a>选举机制</h2><h4 id="半数机制（paxos协议）"><a href="#半数机制（paxos协议）" class="headerlink" title="半数机制（paxos协议）"></a>半数机制（paxos协议）</h4><p>集群中半数以上机器存活，集群可用，所以Zookeeper适合安装奇数台服务器</p>
+<h4 id="内部选举"><a href="#内部选举" class="headerlink" title="内部选举"></a>内部选举</h4><p>在分布式系统中选主最直接的方法是直接选定集群的一个节点为leader，其它的节点为follower，这样引入的一个问题是如果leader节点挂掉，整个集群就挂掉了。需要有一种算法自动选主，如果leader节点挂掉，则从follower节点中选出一个主节点。</p>
+<p><strong>1. 选举阶段 Leader election</strong></p>
+<p>最大ZXID也就是节点本地的最新事务编号，包含epoch和计数两部分。epoch是纪元的意思，相当于Raft算法选主时候的term。</p>
+<ul>
+<li>所有节点处于<strong>Looking状态</strong>，各自依次发起投票，投票包含自己的服务器ID和最新事务ID（ZXID）。</li>
+<li>如果发现别人的ZXID比自己大，也就是数据比自己新，那么就重新发起投票，投票给目前已知最大的ZXID所属节点。</li>
+<li>每次投票后，服务器都会统计投票数量，判断是否有某个节点得到<strong>半数以上</strong>的投票。如果存在这样的节点，该节点将会成为准Leader，状态变为Leading。其他节点的状态变为Following。</li>
+</ul>
+<p><strong>2. 发现阶段 Discovery</strong></p>
+<ul>
+<li>为了防止某些意外情况，比如因网络原因在上一阶段产生多个Leader的情况。</li>
+<li>Leader集思广益，接收所有Follower发来各自的最新epoch值。Leader从中选出最大的epoch，基于此值加1，生成新的epoch分发给各个Follower。</li>
+<li>各个Follower收到全新的epoch后，返回ACK给Leader，带上各自最大的ZXID和历史事务日志。Leader选出最大的ZXID，并更新自身历史日志。</li>
+</ul>
+<p><strong>3. 同步阶段 Synchronization</strong></p>
+<p>Leader刚才收集得到的最新历史事务日志，同步给集群中所有的Follower。只有当<strong>半数Follower同步成功</strong>，这个准Leader<strong>才能成为正式的Leader</strong>。</p>
+<h2 id="节点类型"><a href="#节点类型" class="headerlink" title="节点类型"></a>节点类型</h2><p>持久persistent：client 和 server 断开连接后，创建的节点不删除<br>短暂ephemeral：client 和 server 断开连接后，创建的节点自己删除</p>
+<p>另外分 有序号，无序号。创建有序节点时，会自动将节点名增加序列号</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ create -s /test/no1 &quot;no1&quot;</span><br><span class="line">Created /test/no10000000000</span><br></pre></td></tr></table></figure>
+<p><img src="/images/15510811520116.jpg" alt></p>
+<p>data: ZNode存储的数据信息，每个节点数据最大不超过1MB<br>ACL(</p>
 
       
-
     </div>
+
+    
+
+    
+    
+    
+
+    <div>
+      
+        
+      
+    </div>
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById(&quot;QR&quot;); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Craze lee 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="Craze lee 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Zookeeper/" rel="tag"><i class="fa fa-tag"></i> Zookeeper</a>
+          
+            <a href="/tags/分布式/" rel="tag"><i class="fa fa-tag"></i> 分布式</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/23/每日一面/服务端面试题（汇总）/" rel="next" title="服务端面试题集">
+                <i class="fa fa-chevron-left"></i> 服务端面试题集
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+  </div>
 
 
           </div>
           
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
 
         </div>
         
@@ -540,8 +684,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <div class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -660,6 +813,23 @@
         </div>
       </div>
 
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Zookeeper"><span class="nav-number">1.</span> <span class="nav-text">Zookeeper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特点"><span class="nav-number">2.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据结构"><span class="nav-number">3.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用场景"><span class="nav-number">4.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选举机制"><span class="nav-number">5.</span> <span class="nav-text">选举机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#半数机制（paxos协议）"><span class="nav-number">5.0.1.</span> <span class="nav-text">半数机制（paxos协议）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内部选举"><span class="nav-number">5.0.2.</span> <span class="nav-text">内部选举</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#节点类型"><span class="nav-number">6.</span> <span class="nav-text">节点类型</span></a></li></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
       
 
       
@@ -822,6 +992,10 @@
 
 
   
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
 
   
 
@@ -861,6 +1035,8 @@
 
 
 
+
+  
 
 
   
