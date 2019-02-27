@@ -1,167 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search> 
-  
-  
-    
-    <entry>
-      <title>Zookeeper 面试题</title>
-      <link href="/2019/02/25/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%9D%A2/Zookeeper%E9%9D%A2%E8%AF%95/"/>
-      <url>/2019/02/25/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%9D%A2/Zookeeper%E9%9D%A2%E8%AF%95/</url>
-      
-        <content type="html"><![CDATA[<h2 id="1-Zookeeper的用途，选举的原理是什么？"><a href="#1-Zookeeper的用途，选举的原理是什么？" class="headerlink" title="1. Zookeeper的用途，选举的原理是什么？"></a>1. Zookeeper的用途，选举的原理是什么？</h2><p><strong>用途</strong></p><ol><li>分布式锁</li><li>服务注册和发现<ul><li>利用Znode和Watcher，可以实现分布式服务的注册和发现。最著名的应用就是阿里的分布式RPC框架Dubbo。</li></ul></li><li>共享配置和状态信息<ul><li>Redis的分布式解决方案Codis（豌豆荚），就利用了Zookeeper来存放数据路由表和 codis-proxy 节点的元信息。同时 codis-config 发起的命令都会通过 ZooKeeper 同步到各个存活的 codis-proxy。 </li></ul></li><li>软负载均衡 </li></ol><a id="more"></a><p><strong>选举原理</strong></p><ol><li>每个 server 发出一个投票： 投票的最基本元素是（SID-服务器id,ZXID-事物id）</li><li>接受来自各个服务器的投票</li><li>处理投票：优先检查 ZXID(数据越新ZXID越大),ZXID比较大的作为leader，ZXID一样的情况下比较SID</li><li>统计投票：这里有个过半的概念，大于集群机器数量的一半，即大于或等于（n/2+1）,我们这里的由三台，大于等于2即为达到“过半”的要求。这里也有引申到为什么 Zookeeper 集群推荐是单数。</li></ol><h2 id="2-zookeeper-watch机制"><a href="#2-zookeeper-watch机制" class="headerlink" title="2. zookeeper watch机制"></a>2. zookeeper watch机制</h2><table><thead><tr><th>客户端</th><th>服务端</th></tr></thead><tbody><tr><td>Main进程</td><td></td></tr><tr><td>创建ZK客户端，会创建connet网络连接通信线程，listener监听线程</td><td></td></tr><tr><td>通过connect线程将注册的监听事件发送给Zookeeper服务端</td><td></td></tr><tr><td></td><td>将监听事件添加到注册监听器列表</td></tr><tr><td></td><td>监听到有数据或路径变化，将消息发送给listener</td></tr><tr><td>listener线程内部调用process方法</td></tr></tbody></table><p><img src="/images/15510827433474.jpg" alt></p><h2 id="3-Zookeeper-分布式锁"><a href="#3-Zookeeper-分布式锁" class="headerlink" title="3. Zookeeper 分布式锁"></a>3. Zookeeper 分布式锁</h2><p><img src="/images/15511531924836.jpg" alt></p>]]></content>
-      
-      
+<search>
+  <entry>
+    <title><![CDATA[下一个最大元素 I]]></title>
+    <url>%2F2019%2F02%2F26%2F%E6%AF%8F%E6%97%A5%E4%B8%80%E7%AE%97%2F%E4%B8%8B%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%A4%A7%E5%85%83%E7%B4%A0%20I%2F</url>
+    <content type="text"><![CDATA[题源LeetCode题目：https://leetcode-cn.com/problems/next-greater-element-i/ 给定两个没有重复元素的数组 nums1 和 nums2 ，其中nums1 是 nums2 的子集。找到 nums1 中每个元素在 nums2 中的下一个比其大的值。 nums1 中数字 x 的下一个更大元素是指 x 在 nums2 中对应位置的右边的第一个比 x 大的元素。如果不存在，对应位置输出-1。 示例 1: 输入: nums1 = [4,1,2], nums2 = [1,3,4,2].输出: [-1,3,-1]解释: 对于num1中的数字4，你无法在第二个数组中找到下一个更大的数字，因此输出 -1。 对于num1中的数字1，第二个数组中数字1右边的下一个较大数字是 3。 对于num1中的数字2，第二个数组中没有下一个更大的数字，因此输出 -1。 nums1和nums2中所有元素是唯一的。nums1和nums2 的数组大小都不超过1000。 解法关键词：单调栈 循环遍历较长的数组组成单调递减栈 当栈顶小于当前元素时，出栈，存储到数组或hashmap中 循环较短的数组，查找是否在hashmap中 源码1234567891011121314151617181920212223242526272829303132333435&lt;?phpclass Solution &#123; /** * @param Integer[] $nums1 * @param Integer[] $nums2 * @return Integer[] */ function nextGreaterElement($nums1, $nums2) &#123; $hashMap = []; $stack = []; foreach ($nums2 as $value) &#123; while (!empty($stack) &amp;&amp; end($stack) &lt; $value) &#123; $hashMap[array_pop($stack)]=$value; &#125; array_push($stack, $value); &#125; $res = []; foreach ($nums1 as $value) &#123; if (isset($hashMap[$value])) &#123; $res[] = $hashMap[$value]; &#125; else &#123; $res[] = -1; &#125; &#125; return $res; &#125;&#125;$s = new Solution();$res = $s-&gt;nextGreaterElement([1,3,5,2,4],[6,5,4,3,2,1,7]);var_dump($res);]]></content>
       <categories>
-          
-          <category> Zookeeper </category>
-          
+        <category>每日一算</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> Zookeeper </tag>
-            
-            <tag> 分布式 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Zookeeper 入门介绍</title>
-      <link href="/2019/02/25/Zookeeper/Zookeeper%E5%85%A5%E9%97%A8/"/>
-      <url>/2019/02/25/Zookeeper/Zookeeper%E5%85%A5%E9%97%A8/</url>
-      
-        <content type="html"><![CDATA[<h2 id="Zookeeper"><a href="#Zookeeper" class="headerlink" title="Zookeeper"></a>Zookeeper</h2><p>文件系统 + 通知机制</p><h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ol><li>一个领导者(Leader)，多个跟随者(Follower)组成的集群</li><li>集群中<strong>只要有半数以上节点存活</strong>，Zookeeper集群就能正常服务</li><li>全局数据一致性，每个server保存一份相同的副本，client无论链接哪个server，得到的数据都是一致的</li><li>更新请求顺序执行，来自同一个client的请求按顺序执行</li><li>数据更新<strong>原子性</strong>，一次数据更新要么成功要么失败</li><li>实时性，在一定时间范围内，client能读到最新数据</li></ol><p><img src="/images/15510641008952.jpg" alt></p><a id="more"></a><h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>Zookeeper数据模型的结构与<strong>Unix文件系统很类似</strong>，整体上可看作是<strong>一棵树</strong>，每个节点称作一个ZNode。每个ZNode默认能存储<strong>1MB数据</strong>，每个ZNode都可以通过其<strong>路径唯一标识</strong>。</p><p><img src="/images/15510645270163.jpg" alt></p><h2 id="应用场景-※"><a href="#应用场景-※" class="headerlink" title="应用场景(※)"></a>应用场景(※)</h2><ol><li>分布式锁</li><li>服务注册和发现<ul><li>利用Znode和Watcher，可以实现分布式服务的注册和发现。最著名的应用就是阿里的分布式RPC框架Dubbo。</li></ul></li><li>共享配置和状态信息<ul><li>Redis的分布式解决方案Codis（豌豆荚），就利用了Zookeeper来存放数据路由表和 codis-proxy 节点的元信息。同时 codis-config 发起的命令都会通过 ZooKeeper 同步到各个存活的 codis-proxy。 </li></ul></li></ol><h2 id="选举机制-※"><a href="#选举机制-※" class="headerlink" title="选举机制(※)"></a>选举机制(※)</h2><h3 id="半数机制（paxos协议）"><a href="#半数机制（paxos协议）" class="headerlink" title="半数机制（paxos协议）"></a>半数机制（paxos协议）</h3><p>集群中半数以上机器存活，集群可用，所以Zookeeper适合安装奇数台服务器</p><h3 id="内部选举"><a href="#内部选举" class="headerlink" title="内部选举"></a>内部选举</h3><p>在分布式系统中选主最直接的方法是直接选定集群的一个节点为leader，其它的节点为follower，这样引入的一个问题是如果leader节点挂掉，整个集群就挂掉了。需要有一种算法自动选主，如果leader节点挂掉，则从follower节点中选出一个主节点。</p><p><strong>1. 选举阶段 Leader election</strong></p><p>最大ZXID也就是节点本地的最新事务编号，包含epoch和计数两部分。epoch是纪元的意思，相当于Raft算法选主时候的term。</p><ul><li>所有节点处于<strong>Looking状态</strong>，各自依次发起投票，投票包含自己的服务器ID和最新事务ID（ZXID）。</li><li>如果发现别人的ZXID比自己大，也就是数据比自己新，那么就重新发起投票，投票给目前已知最大的ZXID所属节点。</li><li>每次投票后，服务器都会统计投票数量，判断是否有某个节点得到<strong>半数以上</strong>的投票。如果存在这样的节点，该节点将会成为准Leader，状态变为Leading。其他节点的状态变为Following。</li></ul><p><strong>2. 发现阶段 Discovery</strong></p><ul><li>为了防止某些意外情况，比如因网络原因在上一阶段产生多个Leader的情况。</li><li>Leader集思广益，接收所有Follower发来各自的最新epoch值。Leader从中选出最大的epoch，基于此值加1，生成新的epoch分发给各个Follower。</li><li>各个Follower收到全新的epoch后，返回ACK给Leader，带上各自最大的ZXID和历史事务日志。Leader选出最大的ZXID，并更新自身历史日志。</li></ul><p><strong>3. 同步阶段 Synchronization</strong></p><p>Leader刚才收集得到的最新历史事务日志，同步给集群中所有的Follower。只有当<strong>半数Follower同步成功</strong>，这个准Leader<strong>才能成为正式的Leader</strong>。</p><h2 id="节点类型"><a href="#节点类型" class="headerlink" title="节点类型"></a>节点类型</h2><p>持久persistent：client 和 server 断开连接后，创建的节点不删除<br>短暂ephemeral：client 和 server 断开连接后，创建的节点自己删除</p><p>另外分 有序号，无序号。创建有序节点时，会自动将节点名增加序列号</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ create -s /test/no1 &quot;no1&quot;</span><br><span class="line">Created /test/no10000000000</span><br></pre></td></tr></table></figure><p><img src="/images/15510811520116.jpg" alt></p><p>data: ZNode存储的数据信息，每个节点数据最大不超过1MB<br>ACL(Access Control List): 记录访问权限，哪些人或哪些IP可访问本节点<br>stat: 各种元数据，比如事务ID、版本号、时间戳、大小等<br>child: 当前节点的子节点</p><p><strong>stat</strong></p><ul><li>czxid- 引起这个 znode 创建的 zxid，创建节点的事务的 zxid</li><li>ctime - znode 被创建的毫秒数</li><li>mzxid - znode 最后更新的 zxid</li><li>mtime - znode 最后修改的毫秒数</li><li>pZxid-znode 最后更新的子节点 zxid</li><li>cversion - znode 子节点变化号，znode 子节点修改次数 7)dataversion - znode 数据变化号</li><li>aclVersion - znode 访问控制列表的变化号</li><li>ephemeralOwner- 如果是临时节点，这个是znode拥有者的 session id。如果不是临时节点则是 0。</li><li>dataLength- znode 的数据长度</li><li>numChildren - znode 子节点数量</li></ul><h2 id="监听器原理-※"><a href="#监听器原理-※" class="headerlink" title="监听器原理(※)"></a>监听器原理(※)</h2><table><thead><tr><th>客户端</th><th>服务端</th></tr></thead><tbody><tr><td>Main进程</td><td></td></tr><tr><td>创建ZK客户端，会创建connet网络连接通信线程，listener监听线程</td><td></td></tr><tr><td>通过connect线程将注册的监听事件发送给Zookeeper服务端</td><td></td></tr><tr><td></td><td>将监听事件添加到注册监听器列表</td></tr><tr><td></td><td>监听到有数据或路径变化，将消息发送给listener</td></tr><tr><td>listener线程内部调用process方法</td></tr></tbody></table><p><img src="/images/15510827433474.jpg" alt></p><h4 id="常见监听"><a href="#常见监听" class="headerlink" title="常见监听"></a>常见监听</h4><ol><li>子节点增减变化（如下示例）</li><li>节点数据变化</li></ol><p><img src="/images/15510821471380.jpg" alt><br><img src="/images/15510821616617.jpg" alt></p><h2 id="写数据流程"><a href="#写数据流程" class="headerlink" title="写数据流程"></a>写数据流程</h2><ol><li>客户端发出写入数据请求给任意Follower。</li><li>Follower把写入数据请求转发给Leader。</li><li>Leader采用二阶段提交方式，先发送Propose广播给Follower。</li><li>Follower接到Propose消息，写入日志成功后，返回ACK消息给Leader。</li><li>Leader接到半数以上ACK消息，返回成功给客户端，并且广播Commit请求给Follower</li></ol><p><img src="/images/15510831646797.jpg" alt></p><h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><p>客户端连接</p><p>zkcli -server host:port</p><p><strong>create [-s] [-e] path data acl</strong></p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ create /test <span class="string">"data"</span></span><br><span class="line">Created /test</span><br></pre></td></tr></table></figure><p><strong>get path [watch]</strong> watch指是否监听</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[zk: <span class="number">10.96</span><span class="number">.86</span><span class="number">.22</span>:<span class="number">2181</span>(CONNECTED) <span class="number">10</span>] get /test</span><br><span class="line">data</span><br><span class="line">cZxid = <span class="number">0x10</span></span><br><span class="line">ctime = Mon Feb <span class="number">25</span> <span class="number">16</span>:<span class="number">34</span>:<span class="number">23</span> CST <span class="number">2019</span></span><br><span class="line">mZxid = <span class="number">0x10</span></span><br><span class="line">mtime = Mon Feb <span class="number">25</span> <span class="number">16</span>:<span class="number">34</span>:<span class="number">23</span> CST <span class="number">2019</span></span><br><span class="line">pZxid = <span class="number">0x10</span></span><br><span class="line">cversion = <span class="number">0</span></span><br><span class="line">dataVersion = <span class="number">0</span></span><br><span class="line">aclVersion = <span class="number">0</span></span><br><span class="line">ephemeralOwner = <span class="number">0x0</span></span><br><span class="line">dataLength = <span class="number">4</span></span><br><span class="line">numChildren = <span class="number">0</span></span><br></pre></td></tr></table></figure><p><strong>更多</strong><br>stat path [watch]<br>set path data [version]<br>ls path [watch]<br>delquota [-n|-b] path<br>ls2 path [watch]<br>setAcl path acl<br>setquota -n|-b val path<br>history<br>redo cmdno<br>printwatches on|off<br>delete path [version]<br>sync path<br>listquota path<br>rmr path<br>addauth scheme auth<br>quit<br>getAcl path<br>close<br>connect host:port</p><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://juejin.im/post/5b037d5c518825426e024473" target="_blank" rel="noopener">https://juejin.im/post/5b037d5c518825426e024473</a><br><a href="https://www.bilibili.com/video/av32093417/" target="_blank" rel="noopener">https://www.bilibili.com/video/av32093417/</a></p>]]></content>
-      
-      
+      <tags>
+        <tag>面试</tag>
+        <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Zookeeper 面试题]]></title>
+    <url>%2F2019%2F02%2F25%2F%E6%AF%8F%E6%97%A5%E4%B8%80%E9%9D%A2%2FZookeeper%E9%9D%A2%E8%AF%95%2F</url>
+    <content type="text"><![CDATA[1. Zookeeper的用途，选举的原理是什么？用途 分布式锁 服务注册和发现 利用Znode和Watcher，可以实现分布式服务的注册和发现。最著名的应用就是阿里的分布式RPC框架Dubbo。 共享配置和状态信息 Redis的分布式解决方案Codis（豌豆荚），就利用了Zookeeper来存放数据路由表和 codis-proxy 节点的元信息。同时 codis-config 发起的命令都会通过 ZooKeeper 同步到各个存活的 codis-proxy。 软负载均衡 选举原理 每个 server 发出一个投票： 投票的最基本元素是（SID-服务器id,ZXID-事物id） 接受来自各个服务器的投票 处理投票：优先检查 ZXID(数据越新ZXID越大),ZXID比较大的作为leader，ZXID一样的情况下比较SID 统计投票：这里有个过半的概念，大于集群机器数量的一半，即大于或等于（n/2+1）,我们这里的由三台，大于等于2即为达到“过半”的要求。这里也有引申到为什么 Zookeeper 集群推荐是单数。 2. zookeeper watch机制 客户端 服务端 Main进程 创建ZK客户端，会创建connet网络连接通信线程，listener监听线程 通过connect线程将注册的监听事件发送给Zookeeper服务端 将监听事件添加到注册监听器列表 监听到有数据或路径变化，将消息发送给listener listener线程内部调用process方法 3. Zookeeper 分布式锁]]></content>
       <categories>
-          
-          <category> Zookeeper </category>
-          
+        <category>Zookeeper</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> Zookeeper </tag>
-            
-            <tag> 分布式 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>服务端面试题集（补充）</title>
-      <link href="/2019/02/25/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%9D%A2/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%9D%A2%E8%AF%95%E8%A1%A5%E5%85%85/"/>
-      <url>/2019/02/25/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%9D%A2/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%9D%A2%E8%AF%95%E8%A1%A5%E5%85%85/</url>
-      
-        <content type="html"><![CDATA[<h2 id="来源声明"><a href="#来源声明" class="headerlink" title="来源声明"></a>来源声明</h2><p>来源网络</p><h2 id="补充上篇"><a href="#补充上篇" class="headerlink" title="补充上篇"></a>补充上篇</h2><ol><li><p>mysql事务隔离级别，脏读</p></li><li><p>mysql索引</p></li><li><p>B+数</p></li><li><p>kafka怎么避免重复消费</p></li><li><p>kafka怎么保证顺序消费</p></li><li><p>kafka分区有什么用</p></li><li><p>消费者宕机了，怎么确认有没收到消息</p></li><li><p>消费者group订阅了一个topic，当topic接收到消息时，消费者group上的所有消费者能接收到消息吗</p></li><li><p>thrift协议与http协议的区别</p></li><li><p>golang垃圾回收算法、PHP垃圾回收算法</p></li><li><p>rpc与http和thrift关系</p></li></ol>]]></content>
-      
-      
+      <tags>
+        <tag>Zookeeper</tag>
+        <tag>分布式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Zookeeper 入门介绍]]></title>
+    <url>%2F2019%2F02%2F25%2FZookeeper%2FZookeeper%E5%85%A5%E9%97%A8%2F</url>
+    <content type="text"><![CDATA[Zookeeper文件系统 + 通知机制 特点 一个领导者(Leader)，多个跟随者(Follower)组成的集群 集群中只要有半数以上节点存活，Zookeeper集群就能正常服务 全局数据一致性，每个server保存一份相同的副本，client无论链接哪个server，得到的数据都是一致的 更新请求顺序执行，来自同一个client的请求按顺序执行 数据更新原子性，一次数据更新要么成功要么失败 实时性，在一定时间范围内，client能读到最新数据 数据结构Zookeeper数据模型的结构与Unix文件系统很类似，整体上可看作是一棵树，每个节点称作一个ZNode。每个ZNode默认能存储1MB数据，每个ZNode都可以通过其路径唯一标识。 应用场景(※) 分布式锁 服务注册和发现 利用Znode和Watcher，可以实现分布式服务的注册和发现。最著名的应用就是阿里的分布式RPC框架Dubbo。 共享配置和状态信息 Redis的分布式解决方案Codis（豌豆荚），就利用了Zookeeper来存放数据路由表和 codis-proxy 节点的元信息。同时 codis-config 发起的命令都会通过 ZooKeeper 同步到各个存活的 codis-proxy。 选举机制(※)半数机制（paxos协议）集群中半数以上机器存活，集群可用，所以Zookeeper适合安装奇数台服务器 内部选举在分布式系统中选主最直接的方法是直接选定集群的一个节点为leader，其它的节点为follower，这样引入的一个问题是如果leader节点挂掉，整个集群就挂掉了。需要有一种算法自动选主，如果leader节点挂掉，则从follower节点中选出一个主节点。 1. 选举阶段 Leader election 最大ZXID也就是节点本地的最新事务编号，包含epoch和计数两部分。epoch是纪元的意思，相当于Raft算法选主时候的term。 所有节点处于Looking状态，各自依次发起投票，投票包含自己的服务器ID和最新事务ID（ZXID）。 如果发现别人的ZXID比自己大，也就是数据比自己新，那么就重新发起投票，投票给目前已知最大的ZXID所属节点。 每次投票后，服务器都会统计投票数量，判断是否有某个节点得到半数以上的投票。如果存在这样的节点，该节点将会成为准Leader，状态变为Leading。其他节点的状态变为Following。 2. 发现阶段 Discovery 为了防止某些意外情况，比如因网络原因在上一阶段产生多个Leader的情况。 Leader集思广益，接收所有Follower发来各自的最新epoch值。Leader从中选出最大的epoch，基于此值加1，生成新的epoch分发给各个Follower。 各个Follower收到全新的epoch后，返回ACK给Leader，带上各自最大的ZXID和历史事务日志。Leader选出最大的ZXID，并更新自身历史日志。 3. 同步阶段 Synchronization Leader刚才收集得到的最新历史事务日志，同步给集群中所有的Follower。只有当半数Follower同步成功，这个准Leader才能成为正式的Leader。 节点类型持久persistent：client 和 server 断开连接后，创建的节点不删除短暂ephemeral：client 和 server 断开连接后，创建的节点自己删除 另外分 有序号，无序号。创建有序节点时，会自动将节点名增加序列号 12$ create -s /test/no1 &quot;no1&quot;Created /test/no10000000000 data: ZNode存储的数据信息，每个节点数据最大不超过1MBACL(Access Control List): 记录访问权限，哪些人或哪些IP可访问本节点stat: 各种元数据，比如事务ID、版本号、时间戳、大小等child: 当前节点的子节点 stat czxid- 引起这个 znode 创建的 zxid，创建节点的事务的 zxid ctime - znode 被创建的毫秒数 mzxid - znode 最后更新的 zxid mtime - znode 最后修改的毫秒数 pZxid-znode 最后更新的子节点 zxid cversion - znode 子节点变化号，znode 子节点修改次数 7)dataversion - znode 数据变化号 aclVersion - znode 访问控制列表的变化号 ephemeralOwner- 如果是临时节点，这个是znode拥有者的 session id。如果不是临时节点则是 0。 dataLength- znode 的数据长度 numChildren - znode 子节点数量 监听器原理(※) 客户端 服务端 Main进程 创建ZK客户端，会创建connet网络连接通信线程，listener监听线程 通过connect线程将注册的监听事件发送给Zookeeper服务端 将监听事件添加到注册监听器列表 监听到有数据或路径变化，将消息发送给listener listener线程内部调用process方法 常见监听 子节点增减变化（如下示例） 节点数据变化 写数据流程 客户端发出写入数据请求给任意Follower。 Follower把写入数据请求转发给Leader。 Leader采用二阶段提交方式，先发送Propose广播给Follower。 Follower接到Propose消息，写入日志成功后，返回ACK消息给Leader。 Leader接到半数以上ACK消息，返回成功给客户端，并且广播Commit请求给Follower 命令客户端连接 zkcli -server host:port create [-s] [-e] path data acl 12$ create /test "data"Created /test get path [watch] watch指是否监听 12345678910111213[zk: 10.96.86.22:2181(CONNECTED) 10] get /testdatacZxid = 0x10ctime = Mon Feb 25 16:34:23 CST 2019mZxid = 0x10mtime = Mon Feb 25 16:34:23 CST 2019pZxid = 0x10cversion = 0dataVersion = 0aclVersion = 0ephemeralOwner = 0x0dataLength = 4numChildren = 0 更多stat path [watch]set path data [version]ls path [watch]delquota [-n|-b] pathls2 path [watch]setAcl path aclsetquota -n|-b val pathhistoryredo cmdnoprintwatches on|offdelete path [version]sync pathlistquota pathrmr pathaddauth scheme authquitgetAcl pathcloseconnect host:port 参考https://juejin.im/post/5b037d5c518825426e024473https://www.bilibili.com/video/av32093417/]]></content>
       <categories>
-          
-          <category> 每日一面 </category>
-          
+        <category>Zookeeper</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 面试 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>下一个最大元素 I</title>
-      <link href="/2019/02/24/%E6%AF%8F%E6%97%A5%E4%B8%80%E7%AE%97/%E4%B8%8B%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%A4%A7%E5%85%83%E7%B4%A0%20I/"/>
-      <url>/2019/02/24/%E6%AF%8F%E6%97%A5%E4%B8%80%E7%AE%97/%E4%B8%8B%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%A4%A7%E5%85%83%E7%B4%A0%20I/</url>
-      
-        <content type="html"><![CDATA[<h2 id="题源"><a href="#题源" class="headerlink" title="题源"></a>题源</h2><p>LeetCode题目：<a href="https://leetcode-cn.com/problems/next-greater-element-i/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/next-greater-element-i/</a></p><blockquote><p>给定两个没有重复元素的数组 nums1 和 nums2 ，其中nums1 是 nums2 的子集。找到 nums1 中每个元素在 nums2 中的下一个比其大的值。</p></blockquote><blockquote><p>nums1 中数字 x 的下一个更大元素是指 x 在 nums2 中对应位置的右边的第一个比 x 大的元素。如果不存在，对应位置输出-1。</p></blockquote><a id="more"></a><blockquote><p>示例 1:</p></blockquote><blockquote><p>输入: nums1 = [4,1,2], nums2 = [1,3,4,2].<br>输出: [-1,3,-1]<br>解释:<br>    对于num1中的数字4，你无法在第二个数组中找到下一个更大的数字，因此输出 -1。<br>    对于num1中的数字1，第二个数组中数字1右边的下一个较大数字是 3。<br>    对于num1中的数字2，第二个数组中没有下一个更大的数字，因此输出 -1。</p></blockquote><blockquote><p>nums1和nums2中所有元素是唯一的。<br>nums1和nums2 的数组大小都不超过1000。</p></blockquote><h2 id="解法"><a href="#解法" class="headerlink" title="解法"></a>解法</h2><p>关键词：单调栈<br><img src="/images/15512482510276.jpg" alt></p><ol><li>循环遍历较长的数组组成单调递减栈</li><li>当栈顶小于当前元素时，出栈，存储到数组或hashmap中</li><li>循环较短的数组，查找是否在hashmap中</li></ol><h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> Integer[] $nums1</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> Integer[] $nums2</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> Integer[]</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">nextGreaterElement</span><span class="params">($nums1, $nums2)</span> </span>&#123;</span><br><span class="line">        $hashMap = [];</span><br><span class="line">        $stack = [];</span><br><span class="line">        <span class="keyword">foreach</span> ($nums2 <span class="keyword">as</span> $value) &#123;</span><br><span class="line">            <span class="keyword">while</span> (!<span class="keyword">empty</span>($stack) &amp;&amp; end($stack) &lt; $value) &#123;</span><br><span class="line">                $hashMap[array_pop($stack)]=$value;</span><br><span class="line">            &#125;</span><br><span class="line">            array_push($stack, $value);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        $res = [];</span><br><span class="line">        <span class="keyword">foreach</span> ($nums1 <span class="keyword">as</span> $value) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">isset</span>($hashMap[$value])) &#123;</span><br><span class="line">                $res[] = $hashMap[$value];</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                $res[] = <span class="number">-1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> $res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$s = <span class="keyword">new</span> Solution();</span><br><span class="line">$res = $s-&gt;nextGreaterElement([<span class="number">1</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">2</span>,<span class="number">4</span>],[<span class="number">6</span>,<span class="number">5</span>,<span class="number">4</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">7</span>]);</span><br><span class="line">var_dump($res);</span><br></pre></td></tr></table></figure>]]></content>
-      
-      
+      <tags>
+        <tag>Zookeeper</tag>
+        <tag>分布式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[服务端面试题集（补充）]]></title>
+    <url>%2F2019%2F02%2F25%2F%E6%AF%8F%E6%97%A5%E4%B8%80%E9%9D%A2%2F%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%9D%A2%E8%AF%95%E8%A1%A5%E5%85%85%2F</url>
+    <content type="text"><![CDATA[来源声明来源网络 补充上篇 mysql事务隔离级别，脏读 mysql索引 B+数 kafka怎么避免重复消费 kafka怎么保证顺序消费 kafka分区有什么用 消费者宕机了，怎么确认有没收到消息 消费者group订阅了一个topic，当topic接收到消息时，消费者group上的所有消费者能接收到消息吗 thrift协议与http协议的区别 golang垃圾回收算法、PHP垃圾回收算法 rpc与http和thrift关系]]></content>
       <categories>
-          
-          <category> 每日一算 </category>
-          
+        <category>每日一面</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 面试 </tag>
-            
-            <tag> 算法 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>服务端面试题集</title>
-      <link href="/2019/02/23/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%9D%A2/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%88%E6%B1%87%E6%80%BB%EF%BC%89/"/>
-      <url>/2019/02/23/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%9D%A2/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%88%E6%B1%87%E6%80%BB%EF%BC%89/</url>
-      
-        <content type="html"><![CDATA[<h2 id="来源声明"><a href="#来源声明" class="headerlink" title="来源声明"></a>来源声明</h2><p>从GitHub找到的java面试题集，涵盖的内容比较全，这里仅摘了通用的部分，与语言无关。 <a href="https://github.com/jsondream/java-server-interview-questions" target="_blank" rel="noopener">GitHub地址</a></p><h2 id="分布式相关"><a href="#分布式相关" class="headerlink" title="分布式相关"></a>分布式相关</h2><ol><li><p>对分布式事务的理解</p></li><li><p>如何实现负载均衡，有哪些算法可以实现？</p></li><li><p>Zookeeper的用途，选举的原理是什么？</p></li><li><p>数据的垂直拆分水平拆分。</p></li></ol><a id="more"></a><ol><li><p>zookeeper watch机制</p></li><li><p>redis/zk节点宕机如何处理</p></li><li><p>分布式集群下如何做到唯一序列号</p></li><li><p>如何做一个分布式锁</p></li><li><p>用过哪些MQ，怎么用的，和其他mq比较有什么优缺点，MQ的连接是线程安全的吗</p></li><li><p>MQ系统的数据如何保证不丢失</p></li><li><p>列举出你能想到的数据库分库分表策略；分库分表后，如何解决全表查询的问题。</p></li></ol><h2 id="算法-amp-数据结构-amp-设计模式"><a href="#算法-amp-数据结构-amp-设计模式" class="headerlink" title="算法&amp;数据结构&amp;设计模式"></a>算法&amp;数据结构&amp;设计模式</h2><ol><li><p>海量url去重类问题（布隆过滤器）</p></li><li><p>数组和链表数据结构描述，各自的时间复杂度</p></li><li><p>二叉树遍历</p></li><li><p>快速排序</p></li><li><p>BTree相关的操作</p></li><li><p>在工作中遇到过哪些设计模式，是如何应用的</p></li><li><p>hash算法的有哪几种，优缺点，使用场景</p></li><li><p>什么是一致性hash</p></li><li><p>paxos算法</p></li><li><p>在装饰器模式和代理模式之间，你如何抉择，请结合自身实际情况聊聊</p></li><li><p>代码重构的步骤和原因，如果理解重构到模式？</p></li></ol><h2 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h2><ol><li><p>MySQL InnoDB存储的文件结构</p></li><li><p>索引树是如何维护的？</p></li><li><p>数据库自增主键可能的问题</p></li><li><p>MySQL的几种优化</p></li><li><p>mysql索引为什么使用B+树</p></li><li><p>数据库锁表的相关处理</p></li><li><p>索引失效场景</p></li><li><p>高并发下如何做到安全的修改同一行数据，乐观锁和悲观锁是什么，INNODB的行级锁有哪2种，解释其含义</p></li><li><p>数据库会死锁吗，举一个死锁的例子，mysql怎么解决死锁</p></li></ol><h2 id="Redis-amp-缓存相关"><a href="#Redis-amp-缓存相关" class="headerlink" title="Redis&amp;缓存相关"></a>Redis&amp;缓存相关</h2><ol><li><p>Redis的并发竞争问题如何解决了解Redis事务的CAS操作吗</p></li><li><p>缓存机器增删如何对系统影响最小，一致性哈希的实现</p></li><li><p>Redis持久化的几种方式，优缺点是什么，怎么实现的</p></li><li><p>Redis的缓存失效策略</p></li><li><p>缓存穿透的解决办法</p></li><li><p>redis集群，高可用，原理</p></li><li><p>mySQL里有2000w数据，redis中只存20w的数据，如何保证redis中的数据都是热点数据</p></li><li><p>用Redis和任意语言实现一段恶意登录保护的代码，限制1小时内每用户Id最多只能登录5次</p></li><li><p>redis的数据淘汰策略</p></li></ol><h2 id="网络相关"><a href="#网络相关" class="headerlink" title="网络相关"></a>网络相关</h2><ol><li><p>http1.0和http1.1有什么区别</p></li><li><p>http和https有什么区别</p></li><li><p>TCP/IP协议</p></li><li><p>TCP三次握手和四次挥手的流程，为什么断开连接要4次,如果握手只有两次，会出现什么</p></li><li><p>TIME_WAIT和CLOSE_WAIT的区别</p></li><li><p>说说你知道的几种HTTP响应码</p></li><li><p>当你用浏览器打开一个链接的时候，计算机做了哪些工作步骤</p></li><li><p>TCP/IP如何保证可靠性，数据包有哪些数据组成</p></li><li><p>长连接与短连接</p></li><li><p>Http请求get和post的区别以及数据包格式</p></li><li><p>简述tcp建立连接3次握手，和断开连接4次握手的过程；关闭连接时，出现TIMEWAIT过多是由什么原因引起，是出现在主动断开方还是被动断开方。</p></li></ol><h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ol><li><p>Linux下IO模型有几种，各自的含义是什么</p></li><li><p>实际场景问题，海量登录日志如何排序和处理SQL操作，主要是索引和聚合函数的应用</p></li><li><p>实际场景问题解决，典型的TOP K问题</p></li><li><p>线上bug处理流程</p></li><li><p>如何从线上日志发现问题</p></li><li><p>linux利用哪些命令，查找哪里出了问题（例如io密集任务，cpu过度）</p></li><li><p>场景问题，有一个第三方接口，有很多个线程去调用获取数据，现在规定每秒钟最多有10个线程同时调用它，如何做到。</p></li><li><p>用三个线程按顺序循环打印abc三个字母，比如abcabcabc。</p></li><li><p>常见的缓存策略有哪些，你们项目中用到了什么缓存系统，如何设计的</p></li><li><p>设计一个秒杀系统，30分钟没付款就自动关闭交易（并发会很高）</p></li><li><p>请列出你所了解的性能测试工具</p></li><li><p>后台系统怎么防止请求重复提交？</p></li><li><p>有多个相同的接口，我想客户端同时请求，然后只需要在第一个请求返回结果的时候返回给客户端</p></li></ol><h2 id="PHP相关"><a href="#PHP相关" class="headerlink" title="PHP相关"></a>PHP相关</h2><ol><li>php-fpm运行原理</li></ol>]]></content>
-      
-      
+      <tags>
+        <tag>面试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[服务端面试题集]]></title>
+    <url>%2F2019%2F02%2F23%2F%E6%AF%8F%E6%97%A5%E4%B8%80%E9%9D%A2%2F%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%88%E6%B1%87%E6%80%BB%EF%BC%89%2F</url>
+    <content type="text"><![CDATA[来源声明从GitHub找到的java面试题集，涵盖的内容比较全，这里仅摘了通用的部分，与语言无关。 GitHub地址 分布式相关 对分布式事务的理解 如何实现负载均衡，有哪些算法可以实现？ Zookeeper的用途，选举的原理是什么？ 数据的垂直拆分水平拆分。 zookeeper watch机制 redis/zk节点宕机如何处理 分布式集群下如何做到唯一序列号 如何做一个分布式锁 用过哪些MQ，怎么用的，和其他mq比较有什么优缺点，MQ的连接是线程安全的吗 MQ系统的数据如何保证不丢失 列举出你能想到的数据库分库分表策略；分库分表后，如何解决全表查询的问题。 算法&amp;数据结构&amp;设计模式 海量url去重类问题（布隆过滤器） 数组和链表数据结构描述，各自的时间复杂度 二叉树遍历 快速排序 BTree相关的操作 在工作中遇到过哪些设计模式，是如何应用的 hash算法的有哪几种，优缺点，使用场景 什么是一致性hash paxos算法 在装饰器模式和代理模式之间，你如何抉择，请结合自身实际情况聊聊 代码重构的步骤和原因，如果理解重构到模式？ 数据库 MySQL InnoDB存储的文件结构 索引树是如何维护的？ 数据库自增主键可能的问题 MySQL的几种优化 mysql索引为什么使用B+树 数据库锁表的相关处理 索引失效场景 高并发下如何做到安全的修改同一行数据，乐观锁和悲观锁是什么，INNODB的行级锁有哪2种，解释其含义 数据库会死锁吗，举一个死锁的例子，mysql怎么解决死锁 Redis&amp;缓存相关 Redis的并发竞争问题如何解决了解Redis事务的CAS操作吗 缓存机器增删如何对系统影响最小，一致性哈希的实现 Redis持久化的几种方式，优缺点是什么，怎么实现的 Redis的缓存失效策略 缓存穿透的解决办法 redis集群，高可用，原理 mySQL里有2000w数据，redis中只存20w的数据，如何保证redis中的数据都是热点数据 用Redis和任意语言实现一段恶意登录保护的代码，限制1小时内每用户Id最多只能登录5次 redis的数据淘汰策略 网络相关 http1.0和http1.1有什么区别 http和https有什么区别 TCP/IP协议 TCP三次握手和四次挥手的流程，为什么断开连接要4次,如果握手只有两次，会出现什么 TIME_WAIT和CLOSE_WAIT的区别 说说你知道的几种HTTP响应码 当你用浏览器打开一个链接的时候，计算机做了哪些工作步骤 TCP/IP如何保证可靠性，数据包有哪些数据组成 长连接与短连接 Http请求get和post的区别以及数据包格式 简述tcp建立连接3次握手，和断开连接4次握手的过程；关闭连接时，出现TIMEWAIT过多是由什么原因引起，是出现在主动断开方还是被动断开方。 其他 Linux下IO模型有几种，各自的含义是什么 实际场景问题，海量登录日志如何排序和处理SQL操作，主要是索引和聚合函数的应用 实际场景问题解决，典型的TOP K问题 线上bug处理流程 如何从线上日志发现问题 linux利用哪些命令，查找哪里出了问题（例如io密集任务，cpu过度） 场景问题，有一个第三方接口，有很多个线程去调用获取数据，现在规定每秒钟最多有10个线程同时调用它，如何做到。 用三个线程按顺序循环打印abc三个字母，比如abcabcabc。 常见的缓存策略有哪些，你们项目中用到了什么缓存系统，如何设计的 设计一个秒杀系统，30分钟没付款就自动关闭交易（并发会很高） 请列出你所了解的性能测试工具 后台系统怎么防止请求重复提交？ 有多个相同的接口，我想客户端同时请求，然后只需要在第一个请求返回结果的时候返回给客户端 PHP相关 php-fpm运行原理]]></content>
       <categories>
-          
-          <category> 每日一面 </category>
-          
+        <category>每日一面</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 面试 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Redis读书笔记一：简单动态字符串</title>
-      <link href="/2019/02/23/Redis/%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2/"/>
-      <url>/2019/02/23/Redis/%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2/</url>
-      
-        <content type="html"><![CDATA[<h3 id="简单动态字符串-结构"><a href="#简单动态字符串-结构" class="headerlink" title="简单动态字符串 结构"></a>简单动态字符串 结构</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span> &#123;</span></span><br><span class="line">    <span class="comment">// 记录已使用字节的数量</span></span><br><span class="line">    <span class="keyword">long</span> len;</span><br><span class="line">    <span class="comment">// 记录未使用的字节数量</span></span><br><span class="line">    <span class="keyword">long</span> <span class="built_in">free</span>;</span><br><span class="line">    <span class="comment">// 保存字符串</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><p>buf以<code>&#39;\0&#39;</code>为作为字符串结束符，为了能使用C语言本身的库</p><a id="more"></a><h3 id="SDS设计对比C语言字符串的优势："><a href="#SDS设计对比C语言字符串的优势：" class="headerlink" title="SDS设计对比C语言字符串的优势："></a>SDS设计对比C语言字符串的优势：</h3><ul><li>获取字符串长度的时间复杂度 O(1)</li><li>避免缓冲区溢出情况<ul><li>在拼接扩展字符串时，先检测free是否有足够的容量加载新字符，无则新分配内存</li></ul></li><li>减少修改字符串带来的内存重新分配次数：<ol><li><strong>空间预分配</strong>：在做空间扩展时，不仅会分配必须的内存大小，还会额外分配未使用空间。额外分配规则： <ul><li>如果分配后，sds-&gt;len大小小于1M，将分配额外空间大小为sds-&gt;len。例如：修改后len大小为13，则会分配free=13，最终buf的字节长度为 13(len)+13(fee)+1(<code>&#39;\0&#39;</code>) = 27; </li><li>如果分配后，sds-&gt;len大小 大于 1M，将分配额外空间大小为1M。例如，修改后len大小为30M，则会分配free=1M，最终buf的字节长度为 30M + 1M +1byte </li></ul><ol start="2"><li><strong>惰性空间释放</strong></li></ol><ul><li>避免内存重新分配</li><li>为将来可能有的增长操作提供了优化</li></ul></li></ol></li><li>二进制安全 <ol><li>在C语言中，如果存在<code>&#39;\0&#39;</code>，则会终止取值。二进制的内容可能存在该字符，所以在C语言中是不安全的，但sds是根据len取值</li><li>兼容部分 C 字符串函数。</li></ol></li></ul>]]></content>
-      
-      
+      <tags>
+        <tag>面试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Redis读书笔记一：简单动态字符串]]></title>
+    <url>%2F2019%2F02%2F23%2FRedis%2F%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%2F</url>
+    <content type="text"><![CDATA[简单动态字符串 结构12345678struct sdshdr &#123; // 记录已使用字节的数量 long len; // 记录未使用的字节数量 long free; // 保存字符串 char buf[];&#125;; buf以&#39;\0&#39;为作为字符串结束符，为了能使用C语言本身的库 SDS设计对比C语言字符串的优势： 获取字符串长度的时间复杂度 O(1) 避免缓冲区溢出情况 在拼接扩展字符串时，先检测free是否有足够的容量加载新字符，无则新分配内存 减少修改字符串带来的内存重新分配次数： 空间预分配：在做空间扩展时，不仅会分配必须的内存大小，还会额外分配未使用空间。额外分配规则： 如果分配后，sds-&gt;len大小小于1M，将分配额外空间大小为sds-&gt;len。例如：修改后len大小为13，则会分配free=13，最终buf的字节长度为 13(len)+13(fee)+1(&#39;\0&#39;) = 27; 如果分配后，sds-&gt;len大小 大于 1M，将分配额外空间大小为1M。例如，修改后len大小为30M，则会分配free=1M，最终buf的字节长度为 30M + 1M +1byte 惰性空间释放 避免内存重新分配 为将来可能有的增长操作提供了优化 二进制安全 在C语言中，如果存在&#39;\0&#39;，则会终止取值。二进制的内容可能存在该字符，所以在C语言中是不安全的，但sds是根据len取值 兼容部分 C 字符串函数。]]></content>
       <categories>
-          
-          <category> Redis </category>
-          
-          <category> 《Redis设计与实现》读书笔记 </category>
-          
+        <category>Redis</category>
+        <category>《Redis设计与实现》读书笔记</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> Redis </tag>
-            
-            <tag> 读书笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-  
-  
+      <tags>
+        <tag>Redis</tag>
+        <tag>读书笔记</tag>
+      </tags>
+  </entry>
 </search>
