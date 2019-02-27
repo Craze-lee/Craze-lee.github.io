@@ -111,7 +111,7 @@
 <meta property="og:image" content="http://craze-lee.github.io/images/15510821471380.jpg">
 <meta property="og:image" content="http://craze-lee.github.io/images/15510821616617.jpg">
 <meta property="og:image" content="http://craze-lee.github.io/images/15510831646797.jpg">
-<meta property="og:updated_time" content="2019-02-25T11:11:17.501Z">
+<meta property="og:updated_time" content="2019-02-26T03:31:20.887Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Zookeeper 入门介绍">
 <meta name="twitter:description" content="Zookeeper文件系统 + 通知机制 特点 一个领导者(Leader)，多个跟随者(Follower)组成的集群 集群中只要有半数以上节点存活，Zookeeper集群就能正常服务 全局数据一致性，每个server保存一份相同的副本，client无论链接哪个server，得到的数据都是一致的 更新请求顺序执行，来自同一个client的请求按顺序执行 数据更新原子性，一次数据更新要么成功要么失败">
@@ -424,12 +424,24 @@
                 
               
 
-              <time title="创建时间：2019-02-25 19:00:08 / 修改时间：19:11:17" itemprop="dateCreated datePublished" datetime="2019-02-25T19:00:08+08:00">2019-02-25</time>
+              <time title="创建时间：2019-02-25 19:00:08" itemprop="dateCreated datePublished" datetime="2019-02-25T19:00:08+08:00">2019-02-25</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-02-26 11:31:20" itemprop="dateModified" datetime="2019-02-26T11:31:20+08:00">2019-02-26</time>
               
             
           </span>
@@ -514,7 +526,7 @@
 <a id="more"></a>
 <h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>Zookeeper数据模型的结构与<strong>Unix文件系统很类似</strong>，整体上可看作是<strong>一棵树</strong>，每个节点称作一个ZNode。每个ZNode默认能存储<strong>1MB数据</strong>，每个ZNode都可以通过其<strong>路径唯一标识</strong>。</p>
 <p><img src="/images/15510645270163.jpg" alt></p>
-<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><ol>
+<h2 id="应用场景-※"><a href="#应用场景-※" class="headerlink" title="应用场景(※)"></a>应用场景(※)</h2><ol>
 <li>分布式锁</li>
 <li>服务注册和发现<ul>
 <li>利用Znode和Watcher，可以实现分布式服务的注册和发现。最著名的应用就是阿里的分布式RPC框架Dubbo。</li>
@@ -525,7 +537,7 @@
 </ul>
 </li>
 </ol>
-<h2 id="选举机制"><a href="#选举机制" class="headerlink" title="选举机制"></a>选举机制</h2><h3 id="半数机制（paxos协议）"><a href="#半数机制（paxos协议）" class="headerlink" title="半数机制（paxos协议）"></a>半数机制（paxos协议）</h3><p>集群中半数以上机器存活，集群可用，所以Zookeeper适合安装奇数台服务器</p>
+<h2 id="选举机制-※"><a href="#选举机制-※" class="headerlink" title="选举机制(※)"></a>选举机制(※)</h2><h3 id="半数机制（paxos协议）"><a href="#半数机制（paxos协议）" class="headerlink" title="半数机制（paxos协议）"></a>半数机制（paxos协议）</h3><p>集群中半数以上机器存活，集群可用，所以Zookeeper适合安装奇数台服务器</p>
 <h3 id="内部选举"><a href="#内部选举" class="headerlink" title="内部选举"></a>内部选举</h3><p>在分布式系统中选主最直接的方法是直接选定集群的一个节点为leader，其它的节点为follower，这样引入的一个问题是如果leader节点挂掉，整个集群就挂掉了。需要有一种算法自动选主，如果leader节点挂掉，则从follower节点中选出一个主节点。</p>
 <p><strong>1. 选举阶段 Leader election</strong></p>
 <p>最大ZXID也就是节点本地的最新事务编号，包含epoch和计数两部分。epoch是纪元的意思，相当于Raft算法选主时候的term。</p>
@@ -560,7 +572,7 @@
 <li>dataLength- znode 的数据长度</li>
 <li>numChildren - znode 子节点数量</li>
 </ul>
-<h2 id="监听器原理"><a href="#监听器原理" class="headerlink" title="监听器原理"></a>监听器原理</h2><table>
+<h2 id="监听器原理-※"><a href="#监听器原理-※" class="headerlink" title="监听器原理(※)"></a>监听器原理(※)</h2><table>
 <thead>
 <tr>
 <th>客户端</th>
@@ -688,8 +700,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/02/23/每日一面/服务端面试题（汇总）/" rel="next" title="服务端面试题集">
-                <i class="fa fa-chevron-left"></i> 服务端面试题集
+              <a href="/2019/02/25/每日一面/服务端面试补充/" rel="next" title="服务端面试题集（补充）">
+                <i class="fa fa-chevron-left"></i> 服务端面试题集（补充）
               </a>
             
           </div>
@@ -697,6 +709,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/25/每日一面/Zookeeper面试/" rel="prev" title="Zookeeper 面试题">
+                Zookeeper 面试题 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -772,7 +788,7 @@
                 
                   <a href="/archives">
                 
-                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-count">6</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -793,7 +809,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">4</span>
+                      
+                    
+                    <span class="site-state-item-count">5</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -816,7 +834,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">5</span>
+                      
+                    
+                    <span class="site-state-item-count">6</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -885,7 +905,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Zookeeper"><span class="nav-number">1.</span> <span class="nav-text">Zookeeper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特点"><span class="nav-number">2.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据结构"><span class="nav-number">3.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用场景"><span class="nav-number">4.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选举机制"><span class="nav-number">5.</span> <span class="nav-text">选举机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#半数机制（paxos协议）"><span class="nav-number">5.1.</span> <span class="nav-text">半数机制（paxos协议）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内部选举"><span class="nav-number">5.2.</span> <span class="nav-text">内部选举</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#节点类型"><span class="nav-number">6.</span> <span class="nav-text">节点类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#监听器原理"><span class="nav-number">7.</span> <span class="nav-text">监听器原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常见监听"><span class="nav-number">7.0.1.</span> <span class="nav-text">常见监听</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#写数据流程"><span class="nav-number">8.</span> <span class="nav-text">写数据流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令"><span class="nav-number">9.</span> <span class="nav-text">命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">9.1.</span> <span class="nav-text">参考</span></a></li></ol></li></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Zookeeper"><span class="nav-number">1.</span> <span class="nav-text">Zookeeper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特点"><span class="nav-number">2.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据结构"><span class="nav-number">3.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用场景-※"><span class="nav-number">4.</span> <span class="nav-text">应用场景(※)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选举机制-※"><span class="nav-number">5.</span> <span class="nav-text">选举机制(※)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#半数机制（paxos协议）"><span class="nav-number">5.1.</span> <span class="nav-text">半数机制（paxos协议）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内部选举"><span class="nav-number">5.2.</span> <span class="nav-text">内部选举</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#节点类型"><span class="nav-number">6.</span> <span class="nav-text">节点类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#监听器原理-※"><span class="nav-number">7.</span> <span class="nav-text">监听器原理(※)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常见监听"><span class="nav-number">7.0.1.</span> <span class="nav-text">常见监听</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#写数据流程"><span class="nav-number">8.</span> <span class="nav-text">写数据流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令"><span class="nav-number">9.</span> <span class="nav-text">命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">9.1.</span> <span class="nav-text">参考</span></a></li></ol></li></div>
             
 
           </div>
