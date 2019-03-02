@@ -97,7 +97,7 @@
 
 
   <meta name="description" content="Zookeeper文件系统 + 通知机制 特点 一个领导者(Leader)，多个跟随者(Follower)组成的集群 集群中只要有半数以上节点存活，Zookeeper集群就能正常服务 全局数据一致性，每个server保存一份相同的副本，client无论链接哪个server，得到的数据都是一致的 更新请求顺序执行，来自同一个client的请求按顺序执行 数据更新原子性，一次数据更新要么成功要么失败">
-<meta name="keywords" content="Zookeeper,分布式">
+<meta name="keywords" content="分布式,Zookeeper">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Zookeeper 入门介绍">
 <meta property="og:url" content="http://craze-lee.github.io/2019/02/25/Zookeeper/Zookeeper入门/index.html">
@@ -111,7 +111,7 @@
 <meta property="og:image" content="http://craze-lee.github.io/images/15510821471380.jpg">
 <meta property="og:image" content="http://craze-lee.github.io/images/15510821616617.jpg">
 <meta property="og:image" content="http://craze-lee.github.io/images/15510831646797.jpg">
-<meta property="og:updated_time" content="2019-02-26T03:31:20.887Z">
+<meta property="og:updated_time" content="2019-02-27T08:11:09.551Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Zookeeper 入门介绍">
 <meta name="twitter:description" content="Zookeeper文件系统 + 通知机制 特点 一个领导者(Leader)，多个跟随者(Follower)组成的集群 集群中只要有半数以上节点存活，Zookeeper集群就能正常服务 全局数据一致性，每个server保存一份相同的副本，client无论链接哪个server，得到的数据都是一致的 更新请求顺序执行，来自同一个client的请求按顺序执行 数据更新原子性，一次数据更新要么成功要么失败">
@@ -441,7 +441,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-02-26 11:31:20" itemprop="dateModified" datetime="2019-02-26T11:31:20+08:00">2019-02-26</time>
+                <time title="修改时间：2019-02-27 16:11:09" itemprop="dateModified" datetime="2019-02-27T16:11:09+08:00">2019-02-27</time>
               
             
           </span>
@@ -540,7 +540,7 @@
 <h2 id="选举机制-※"><a href="#选举机制-※" class="headerlink" title="选举机制(※)"></a>选举机制(※)</h2><h3 id="半数机制（paxos协议）"><a href="#半数机制（paxos协议）" class="headerlink" title="半数机制（paxos协议）"></a>半数机制（paxos协议）</h3><p>集群中半数以上机器存活，集群可用，所以Zookeeper适合安装奇数台服务器</p>
 <h3 id="内部选举"><a href="#内部选举" class="headerlink" title="内部选举"></a>内部选举</h3><p>在分布式系统中选主最直接的方法是直接选定集群的一个节点为leader，其它的节点为follower，这样引入的一个问题是如果leader节点挂掉，整个集群就挂掉了。需要有一种算法自动选主，如果leader节点挂掉，则从follower节点中选出一个主节点。</p>
 <p><strong>1. 选举阶段 Leader election</strong></p>
-<p>最大ZXID也就是节点本地的最新事务编号，包含epoch和计数两部分。epoch是纪元的意思，相当于Raft算法选主时候的term。</p>
+<p>最大ZXID也就是节点本地的最新事务编号，包含epoch和计数两部分。epoch是纪元的意思，相当于Raft算法选主时候的term，标识当前leader周期，每次选举一个新的Leader服务器后，会生成一个新的epoch</p>
 <ul>
 <li>所有节点处于<strong>Looking状态</strong>，各自依次发起投票，投票包含自己的服务器ID和最新事务ID（ZXID）。</li>
 <li>如果发现别人的ZXID比自己大，也就是数据比自己新，那么就重新发起投票，投票给目前已知最大的ZXID所属节点。</li>
@@ -626,7 +626,7 @@
 <p><strong>get path [watch]</strong> watch指是否监听</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[zk: <span class="number">10.96</span><span class="number">.86</span><span class="number">.22</span>:<span class="number">2181</span>(CONNECTED) <span class="number">10</span>] get /test</span><br><span class="line">data</span><br><span class="line">cZxid = <span class="number">0x10</span></span><br><span class="line">ctime = Mon Feb <span class="number">25</span> <span class="number">16</span>:<span class="number">34</span>:<span class="number">23</span> CST <span class="number">2019</span></span><br><span class="line">mZxid = <span class="number">0x10</span></span><br><span class="line">mtime = Mon Feb <span class="number">25</span> <span class="number">16</span>:<span class="number">34</span>:<span class="number">23</span> CST <span class="number">2019</span></span><br><span class="line">pZxid = <span class="number">0x10</span></span><br><span class="line">cversion = <span class="number">0</span></span><br><span class="line">dataVersion = <span class="number">0</span></span><br><span class="line">aclVersion = <span class="number">0</span></span><br><span class="line">ephemeralOwner = <span class="number">0x0</span></span><br><span class="line">dataLength = <span class="number">4</span></span><br><span class="line">numChildren = <span class="number">0</span></span><br></pre></td></tr></table></figure>
 <p><strong>更多</strong><br>stat path [watch]<br>set path data [version]<br>ls path [watch]<br>delquota [-n|-b] path<br>ls2 path [watch]<br>setAcl path acl<br>setquota -n|-b val path<br>history<br>redo cmdno<br>printwatches on|off<br>delete path [version]<br>sync path<br>listquota path<br>rmr path<br>addauth scheme auth<br>quit<br>getAcl path<br>close<br>connect host:port</p>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://juejin.im/post/5b037d5c518825426e024473" target="_blank" rel="noopener">https://juejin.im/post/5b037d5c518825426e024473</a><br><a href="https://www.bilibili.com/video/av32093417/" target="_blank" rel="noopener">https://www.bilibili.com/video/av32093417/</a></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://juejin.im/post/5b037d5c518825426e024473" target="_blank" rel="noopener">https://juejin.im/post/5b037d5c518825426e024473</a><br><a href="https://www.bilibili.com/video/av32093417/" target="_blank" rel="noopener">https://www.bilibili.com/video/av32093417/</a><br><a href="https://blog.csdn.net/u013679744/article/details/79222103" target="_blank" rel="noopener">https://blog.csdn.net/u013679744/article/details/79222103</a><br>《从Paxos到ZooKeeper》经典</p>
 
       
     </div>
@@ -685,9 +685,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Zookeeper/" rel="tag"><i class="fa fa-tag"></i> Zookeeper</a>
-          
             <a href="/tags/分布式/" rel="tag"><i class="fa fa-tag"></i> 分布式</a>
+          
+            <a href="/tags/Zookeeper/" rel="tag"><i class="fa fa-tag"></i> Zookeeper</a>
           
         </div>
       
@@ -788,7 +788,7 @@
                 
                   <a href="/archives">
                 
-                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -811,7 +811,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">5</span>
+                      
+                    
+                    <span class="site-state-item-count">6</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -836,7 +838,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">6</span>
+                      
+                    
+                    <span class="site-state-item-count">7</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
