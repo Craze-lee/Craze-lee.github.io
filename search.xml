@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[【Golang零基础入门】04 函数]]></title>
+    <url>%2F2019%2F03%2F19%2FGolang%2F%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%2F04%20%E5%87%BD%E6%95%B0%2F</url>
+    <content type="text"><![CDATA[纯函数独立存在，不依附于任何实体，没有接收者 12345package helperfunc SayHi(name string) &#123; fmt.Printf("Hi %s", name)&#125; 方法与函数不一样的，在定义的时候，会与接收者绑定在一起。 123456789101112type human struct &#123; name string&#125;(h human)func SayHi() string &#123; return "Hi " + h.name&#125;func main()&#123; h := Human&#123;name:"lee"&#125; fmt.Println(h.SayHi())&#125; 与函数对比，应该可以看到，在函数func声明之前增加的（h human），这个就是接收者，每一个humman绑定了该方法，类似面向对象里的成员函数。 值接受&amp;指针接收 值接收者，在调用的时候是值接收者的一个副本，所以对该值的任何修改，不会影响原来的类型变量。 指针接收者传递的是一个指向原值指针的副本，所以修改时，同时也会影响原来类型变量的值。 123456789// 值接收，不能修改原值(h human)func set()&#123; h.name = "can not set"&#125;// 指针接收，能修改原值(h *human)func modify()&#123; h.nam = "can modify"&#125; 多值返回Go的函数方法支持多值返回，例如标准库中，很多都是返回两个值，一个是返回值，一个是出错时的错误信息，这就是我们经常看到下面这段代码的原因。 12345678if err != nil &#123; // do something&#125;// 我们定义方法func modify(name string)(string, error)&#123; return name, nil&#125;]]></content>
+      <categories>
+        <category>Golang</category>
+        <category>零基础入门</category>
+      </categories>
+      <tags>
+        <tag>Golang</tag>
+        <tag>Golang零基础入门</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[【Golang零基础入门】03 数据类型]]></title>
+    <url>%2F2019%2F03%2F19%2FGolang%2F%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%2F03%20%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%2F</url>
+    <content type="text"><![CDATA[基本数据类型整型有符号类型：int8、int16、int32、int64，分别对应8、16、32、64bit大小 无符号类型：uint8、uint16、uint32、uint64 浮点数与复数float32和float64 两种精度的复数类型：complex64和complex128，分别对应float32和float64两种浮点数精度。 布尔型true和false 字符串只支持双引号，不支持单引号。string := &quot;hello, go&quot; 常量const 标记。 ioat常量生成器，适合生成枚举类型。如下面的例子，Sunday被声明为0，Monday为1，一次类推。 1234567891011type Weekday intconst ( Sunday Weekday = iota Monday Tuesday Wednesday Thursday Friday Saturday) 复合数据类型数组 array数组的长度是固定，所以实际项目中是比较少直接使用 123var num [10]int // 声明长度为10的int类型数组，每个值初始值为0var a [3]int = [3]int&#123;1, 2, 3&#125; // 声明时实例化var a = [...]int&#123;1, 2&#125; // 使用...数组的长度由初始化的个数决定，例如这长度为2 切片 slice变长的数组，如果你之前是写php，那你就可以把slice认为是php的无索引数组了,一般写作[]T 一个slice由三部分构成：指针、长度、容量。内置的len和cap函数返回对应长度和容量。len(s) == 0判断是否为空，不应该用 s == nil append扩展slice 12var nums []intnums = append(nums, 1, 2) 哈希表 map是一个无序的key/value对的集合，写法：map[K]V。 如果你之前是写php，那你可以把它认为是php的索引数组，但没有PHP灵活，他的key，必须是同一类型，value也必须是统一类型。 1234567891011121314151617181920212223242526score := make(map[string]int) // 创建key为string，value为int型// 初始化方法1score := map[string]int&#123; "lilei": 88, "hanmeimei": 90,&#125;// 初始化方法2score := make(map[string]int)score["lilei"] = 88score["hanmeimei"] = 90// 遍历for name, num := range score &#123; fmt.Printf("%s\t%d\n", name, num)&#125;// delete删除元素delete(ages, "li") // remove element ages["li"]// 小技巧，判断map中key是否存在// map的下标语法将产生两个值；第一个是值，第二个是一个布尔值，用于报告元素是否真的存在。if num, ok := score["xiaoming"]; ok &#123; //存在&#125; 结构体 struct复杂聚合数据类型。如果成员首字母大写，则对外可见。 12345type Student struct &#123; ID int Name string Age int&#125; 结构体嵌入和匿名成员 12345678910111213type Person struct &#123; Name, Addr string&#125;type Student struct &#123; Person Subject string&#125;var s students.Name = &quot;lilei&quot;s.Addr = &quot;beijing&quot;s.Subject = &quot;shuxue&quot; Go语言的特性：可以只声明一个成员对应的数据类型而不指定成员名，如上Person。实际项目中开发使用该声明方式。]]></content>
+      <categories>
+        <category>Golang</category>
+        <category>零基础入门</category>
+      </categories>
+      <tags>
+        <tag>Golang</tag>
+        <tag>Golang零基础入门</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[【MySQL 原理】01 体系结构]]></title>
     <url>%2F2019%2F03%2F07%2FMySQL%2FMySQL%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%2F</url>
-    <content type="text"><![CDATA[MySQL体系结构–摘自MySQL官方手册 整体可分四层第一层：连接层防止资源的频繁分配、释放，提前建立一个连接池 功能：进行身份验证、线程管理、连接限制、内存检查、数据缓存。 实现：预先在连接池中放入一定数量的连接，当需要建立数据库连接时，从池中取出一个，用完放回去。 通信协议： TCP/IP协议，本地与远程连接 UNIX套接字文件 共享内存 命名管道 第二次：SQL层总共由5个部分组成 1. 管理服务和工具组件备份、复制、集群、管理、配置、迁移等管理工具 2. SQL接口组件进行DML、DDL，存储过程、视图等操作和管理 3. 解析器组件验证和解析SQL命令 4. 查询优化器对SQL查询进行优化 5. 缓存和缓冲区对结果集进行缓存，提升重复查询效率 第三层：插件式存储引擎MySQL的存储引擎是插件式的，能由第三方开发 – 查看数据库支持的引擎 3.1 MyISAM查询速度快，较好的索引优化和数据压缩技术，不支持事务、表锁设计，支持全文索引 MyISAM表由MYD和MYI组成，MYD存放数据数据，MYI存放索引文件 3.2 InnoDB支持事务，行锁设计、支持外键。 每个innodb存储引擎的表单独存放在独立的ibd文件中 3.3 Memory适合存储临时数据，如果数据库重启或崩溃，数据将消失。只支持表锁，并发性能差。 其他还有 Archive 、 Federated 、Maria存储引擎等 第四次：物理文件 支持的文件类型 EXT3、EXT4、NTFS、NFS 文件内容 数据文件 日志文件]]></content>
+    <content type="text"><![CDATA[MySQL体系结构–摘自MySQL官方手册 整体可分四层第一层：连接层防止资源的频繁分配、释放，提前建立一个连接池 功能：进行身份验证、线程管理、连接限制、内存检查、数据缓存。 实现：预先在连接池中放入一定数量的连接，当需要建立数据库连接时，从池中取出一个，用完放回去。 通信协议： TCP/IP协议，本地与远程连接 UNIX套接字文件 共享内存 命名管道 第二层：SQL层总共由5个部分组成 1. 管理服务和工具组件备份、复制、集群、管理、配置、迁移等管理工具 2. SQL接口组件进行DML、DDL，存储过程、视图等操作和管理 3. 解析器组件验证和解析SQL命令 4. 查询优化器对SQL查询进行优化 5. 缓存和缓冲区对结果集进行缓存，提升重复查询效率 第三层：插件式存储引擎MySQL的存储引擎是插件式的，能由第三方开发 – 查看数据库支持的引擎 3.1 MyISAM查询速度快，较好的索引优化和数据压缩技术，不支持事务、表锁设计，支持全文索引 MyISAM表由MYD和MYI组成，MYD存放数据数据，MYI存放索引文件 3.2 InnoDB支持事务，行锁设计、支持外键。 每个innodb存储引擎的表单独存放在独立的ibd文件中 3.3 Memory适合存储临时数据，如果数据库重启或崩溃，数据将消失。只支持表锁，并发性能差。 其他还有 Archive 、 Federated 、Maria存储引擎等 第四次：物理文件 支持的文件类型 EXT3、EXT4、NTFS、NFS 文件内容 数据文件 日志文件]]></content>
       <categories>
         <category>MySQL</category>
         <category>原理分析</category>
@@ -14,9 +40,9 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[【Golang零基础入门】02 类型与变量]]></title>
+    <title><![CDATA[【Golang零基础入门】02 变量与类型]]></title>
     <url>%2F2019%2F03%2F06%2FGolang%2F%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%2F02%20%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%8F%98%E9%87%8F%2F</url>
-    <content type="text"></content>
+    <content type="text"><![CDATA[变量命名我们都知道其他面向对象的语言，都是用关键词public、private、protected来标记可见性。但在GO里，直接用首字母的大小写来决定可见性，大写对外可见，小写仅包内可见。例如fmt包的Printf函数在fmt包外部访问。 Golang习惯驼峰式命名，例如isExisits() 声明有四种类型的声明语句：变量var、常量const、类型type、函数func 变量1. var声明 var 变量名字 类型 = 表达式 一般 “类型”、或者“=”可以省略一个，例如： 12var i, j, k int // int, int, intvar b, f, s = true, 2.3, &quot;four&quot; // bool, float64, string 用处：用于需要显式指定变量类型地方，或者因为变量稍后会被重新赋值而初始值无关紧要的地方。 2. 简短声明 变量名字 := 表达式 1i := 100 用处：用于大部分的局部变量的声明和初始化。 注意，简短变量声明语句中必须至少要声明一个新的变量，下面的代码将不能编译通过： 123f, err := os.Open(infile)// ...f, err := os.Create(outfile) // 编译错误，提示没有新的变量，不需要:= 指针一个变量对应一个保存了变量对应类型值的内存空间。 一个指针的值是另一个变量的地址。 12345i := 1p := &amp;i // p 类型为 *int 指向ifmt.Println(*p) // "1"*p = 2 // 因为p指向了i的地址，所以相当于 i = 2fmt.Println(i) // "2" 类型类型声明语句一般出现在包一级，因此如果新创建的类型名字的首字符大写，则在外部包也可以使用。 type 类型名字 底层类型 例子：最常用的struct，User被声明为一个类型 1234type User struct&#123; name string age string&#125;]]></content>
       <categories>
         <category>Golang</category>
         <category>零基础入门</category>
@@ -47,8 +73,8 @@
         <category>Zookeeper</category>
       </categories>
       <tags>
-        <tag>Zookeeper</tag>
         <tag>分布式</tag>
+        <tag>Zookeeper</tag>
       </tags>
   </entry>
   <entry>
@@ -59,8 +85,8 @@
         <category>Zookeeper</category>
       </categories>
       <tags>
-        <tag>Zookeeper</tag>
         <tag>分布式</tag>
+        <tag>Zookeeper</tag>
       </tags>
   </entry>
   <entry>
@@ -71,8 +97,8 @@
         <category>Kafka</category>
       </categories>
       <tags>
-        <tag>分布式</tag>
         <tag>Kafka</tag>
+        <tag>分布式</tag>
       </tags>
   </entry>
   <entry>
@@ -95,8 +121,8 @@
         <category>Zookeeper</category>
       </categories>
       <tags>
-        <tag>Zookeeper</tag>
         <tag>分布式</tag>
+        <tag>Zookeeper</tag>
       </tags>
   </entry>
   <entry>
@@ -107,8 +133,8 @@
         <category>Zookeeper</category>
       </categories>
       <tags>
-        <tag>Zookeeper</tag>
         <tag>分布式</tag>
+        <tag>Zookeeper</tag>
       </tags>
   </entry>
   <entry>
