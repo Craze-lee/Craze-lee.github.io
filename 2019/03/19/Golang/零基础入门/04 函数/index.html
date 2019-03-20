@@ -96,18 +96,18 @@
 
 
 
-  <meta name="description" content="纯函数独立存在，不依附于任何实体，没有接收者 12345package helperfunc SayHi(name string)  &amp;#123;	fmt.Printf(&quot;Hi %s&quot;, name)&amp;#125; 方法与函数不一样的，在定义的时候，会与接收者绑定在一起。 123456789101112type human struct &amp;#123;    name string&amp;#125;(h hu">
+  <meta name="description" content="纯函数独立存在，不依附于任何实体，没有接收者 12345package helperfunc SayHi(name string)  &amp;#123;	fmt.Printf(&quot;Hi %s&quot;, name)&amp;#125;">
 <meta name="keywords" content="Golang,Golang零基础入门">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Golang零基础入门】04 函数">
+<meta property="og:title" content="【Golang零基础入门】04 函数与方法">
 <meta property="og:url" content="http://craze-lee.github.io/2019/03/19/Golang/零基础入门/04 函数/index.html">
 <meta property="og:site_name" content="念念不忘 必有回响">
-<meta property="og:description" content="纯函数独立存在，不依附于任何实体，没有接收者 12345package helperfunc SayHi(name string)  &amp;#123;	fmt.Printf(&quot;Hi %s&quot;, name)&amp;#125; 方法与函数不一样的，在定义的时候，会与接收者绑定在一起。 123456789101112type human struct &amp;#123;    name string&amp;#125;(h hu">
+<meta property="og:description" content="纯函数独立存在，不依附于任何实体，没有接收者 12345package helperfunc SayHi(name string)  &amp;#123;	fmt.Printf(&quot;Hi %s&quot;, name)&amp;#125;">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-19T09:18:14.711Z">
+<meta property="og:updated_time" content="2019-03-20T02:42:40.482Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="【Golang零基础入门】04 函数">
-<meta name="twitter:description" content="纯函数独立存在，不依附于任何实体，没有接收者 12345package helperfunc SayHi(name string)  &amp;#123;	fmt.Printf(&quot;Hi %s&quot;, name)&amp;#125; 方法与函数不一样的，在定义的时候，会与接收者绑定在一起。 123456789101112type human struct &amp;#123;    name string&amp;#125;(h hu">
+<meta name="twitter:title" content="【Golang零基础入门】04 函数与方法">
+<meta name="twitter:description" content="纯函数独立存在，不依附于任何实体，没有接收者 12345package helperfunc SayHi(name string)  &amp;#123;	fmt.Printf(&quot;Hi %s&quot;, name)&amp;#125;">
 
 
 
@@ -124,7 +124,7 @@
   };
 </script>
 
-  <title>【Golang零基础入门】04 函数 | 念念不忘 必有回响</title>
+  <title>【Golang零基础入门】04 函数与方法 | 念念不忘 必有回响</title>
   
 
 
@@ -390,7 +390,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">【Golang零基础入门】04 函数
+          <h1 class="post-title" itemprop="name headline">【Golang零基础入门】04 函数与方法
 
               
             
@@ -416,12 +416,24 @@
                 
               
 
-              <time title="创建时间：2019-03-19 16:59:08 / 修改时间：17:18:14" itemprop="dateCreated datePublished" datetime="2019-03-19T16:59:08+08:00">2019-03-19</time>
+              <time title="创建时间：2019-03-19 16:59:08" itemprop="dateCreated datePublished" datetime="2019-03-19T16:59:08+08:00">2019-03-19</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-03-20 10:42:40" itemprop="dateModified" datetime="2019-03-20T10:42:40+08:00">2019-03-20</time>
               
             
           </span>
@@ -502,16 +514,17 @@
       
         <h2 id="纯函数"><a href="#纯函数" class="headerlink" title="纯函数"></a>纯函数</h2><p>独立存在，不依附于任何实体，没有接收者</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> helper</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">SayHi</span><span class="params">(name <span class="keyword">string</span>)</span></span>  &#123;</span><br><span class="line">	fmt.Printf(<span class="string">"Hi %s"</span>, name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
 <h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>与函数不一样的，在定义的时候，会与接收者绑定在一起。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> human <span class="keyword">struct</span> &#123;</span><br><span class="line">    name <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">(h human)<span class="function"><span class="keyword">func</span> <span class="title">SayHi</span><span class="params">()</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">"Hi "</span> + h.name</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    h := Human&#123;name:<span class="string">"lee"</span>&#125;</span><br><span class="line">    fmt.Println(h.SayHi())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>与函数对比，应该可以看到，在函数func声明之前增加的（h human），这个就是接收者，每一个humman绑定了该方法，类似面向对象里的成员函数。</p>
-<h2 id="值接受-amp-指针接收"><a href="#值接受-amp-指针接收" class="headerlink" title="值接受&amp;指针接收"></a>值接受&amp;指针接收</h2><ol>
+<h2 id="值接收-amp-指针接收"><a href="#值接收-amp-指针接收" class="headerlink" title="值接收&amp;指针接收"></a>值接收&amp;指针接收</h2><ol>
 <li>值接收者，在调用的时候是值接收者的一个副本，所以对该值的任何修改，不会影响原来的类型变量。</li>
 <li>指针接收者传递的是一个指向原值指针的副本，所以修改时，同时也会影响原来类型变量的值。</li>
 </ol>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 值接收，不能修改原值</span></span><br><span class="line">(h human)<span class="function"><span class="keyword">func</span> <span class="title">set</span><span class="params">()</span></span>&#123;</span><br><span class="line">    h.name = <span class="string">"can not set"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 指针接收，能修改原值</span></span><br><span class="line">(h *human)<span class="function"><span class="keyword">func</span> <span class="title">modify</span><span class="params">()</span></span>&#123;</span><br><span class="line">    h.nam = <span class="string">"can modify"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="多值返回"><a href="#多值返回" class="headerlink" title="多值返回"></a>多值返回</h2><p>Go的函数方法支持多值返回，例如标准库中，很多都是返回两个值，一个是返回值，一个是出错时的错误信息，这就是我们经常看到下面这段代码的原因。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 我们定义方法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">modify</span><span class="params">(name <span class="keyword">string</span>)</span><span class="params">(<span class="keyword">string</span>, error)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> name, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 我们定义方法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">modify</span><span class="params">(name <span class="keyword">string</span>)</span><span class="params">(<span class="keyword">string</span>, error)</span></span>&#123;</span><br><span class="line"><span class="keyword">return</span> name, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -806,7 +819,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#纯函数"><span class="nav-number">1.</span> <span class="nav-text">纯函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法"><span class="nav-number">2.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#值接受-amp-指针接收"><span class="nav-number">3.</span> <span class="nav-text">值接受&amp;指针接收</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多值返回"><span class="nav-number">4.</span> <span class="nav-text">多值返回</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#纯函数"><span class="nav-number">1.</span> <span class="nav-text">纯函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法"><span class="nav-number">2.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#值接收-amp-指针接收"><span class="nav-number">3.</span> <span class="nav-text">值接收&amp;指针接收</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多值返回"><span class="nav-number">4.</span> <span class="nav-text">多值返回</span></a></li></ol></div>
             
 
           </div>
