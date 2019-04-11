@@ -1,6 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[广告名词解释-Ad Network]]></title>
+    <url>%2F2019%2F04%2F11%2F%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A%2F%E5%B9%BF%E5%91%8A%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A-Ad_Network%2F</url>
+    <content type="text"><![CDATA[Ad Network 广告网络平台 1. 定义即“在线广告联盟”，是一种介于想出售广告空间的网站与想在网站上刊登广告的广告主之间的平台.(百度百科) 2. 运行机制最开始，Ad network 集合了众多的中小网站，汇集后即拥有了像是大平台的流量，甚至更多。因此开始有广告主愿意与 Ad network 购买广告，甚至原本拥有高流量的网站，因為有一些较少的版位沒有卖出，因此也加入了 Ad network。]]></content>
+      <categories>
+        <category>计算广告</category>
+      </categories>
+      <tags>
+        <tag>计算广告</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[广告名词解释-Ad Exchange]]></title>
+    <url>%2F2019%2F04%2F10%2F%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A%2F%E5%B9%BF%E5%91%8A%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A-Ad_Exchange%2F</url>
+    <content type="text"><![CDATA[Ad Exchange (广告交易平台) 1. 定义一个开放的、能够将出版商和广告商联系在一起的在线广告市场(类似于股票交易所)。(百度百科) 2. 运行机制当一个用户访问广告位页面时，ssp端向Ad Exchange发出访问讯号，告知有一个访问请求，ssp把广告位的具体信息，例如所属站点、最低出价以及通过DMP分析匹配后的用户属性信息打包发送给各个DSP，DSP端开始对这个广告展现进行竞价，竞价获胜者就能够让自己的广告展现在这个广告位上，进而让用户看到。 下图描述的例子是一个对汽车感兴趣的用户访问站点，DSP端各个汽车厂家对这个用户展开争夺的过程。]]></content>
+      <categories>
+        <category>计算广告</category>
+      </categories>
+      <tags>
+        <tag>计算广告</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[广告名词解释-DMP]]></title>
+    <url>%2F2019%2F04%2F10%2F%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A%2F%E5%B9%BF%E5%91%8A%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A-DMP%2F</url>
+    <content type="text"><![CDATA[DMP（Data-Management Platform，数据管理平台） 1. 定义是把分散的多方数据进行整合纳入统一的技术平台，并对这些数据进行标准化和细分，让用户可以把这些细分结果推向现有的互动营销环境里的平台。(百度百科) 2. 与DSP对比DSP 自己有可能有受众数据，但有很多其实没有，或者有，也不够全面，不够准确。那怎么办呢？专业提供者DMP出现了，简单讲，它们手中握有受众数据，并且能够让 DSP 驳接到他们这里，利用它们所有的数据。 DMP 为了获取受众的数据，它必须至少做几件事情：其一，它需要为所有的受众每一个做一个标记，这个标记在目前的技术条件下，主要是通过一种叫做 cookie 的事物完成的。其二，它还需要能够实现跨域追踪 DMP是本草纲目。DSP是专业药材买手。普通人对照着本草纲目也不大会买错药材，但对行情不熟悉，价钱高了低了没谱，找个专业买手付点服务费省心，说不定还省钱。买手逛的市场多了，慢慢的自己也有个小本本，记录不同时期好药材的成色等特点，比本草纲目要与时俱进一丁丁，但肯定没本草纲目记录的全。 查看大图 【扩展阅读】http://daily.zhihu.com/story/8700074?utm_campaign=in_app_share&amp;utm_medium=iOS&amp;utm_source=weixin]]></content>
+      <categories>
+        <category>计算广告</category>
+      </categories>
+      <tags>
+        <tag>计算广告</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[广告名词解释-SSP]]></title>
+    <url>%2F2019%2F04%2F10%2F%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A%2F%E5%B9%BF%E5%91%8A%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A-SSP%2F</url>
+    <content type="text"><![CDATA[SSP（Sell/Supply-Side Platform）供应方平台 1. 定义供应方平台能够让出版商也介入广告交易，从而使它们的库存广告可用。通过这一平台，出版商希望他们的库存广告可以获得最高的有效每千次展示费用，而不必以低价销售出去(百度百科) 通俗的讲：是站长服务平台，站长们在SSP上管理自己的广告位，控制广告的展现等。 2. 运行机制SSP与DSP是一一对应的。DSP负责管理广告媒体信息，以及广告媒体对应的用户属性。SSP负责供应广告媒体信息，根据站长提供的广告要求以及当前用户属性，上报到交易平台，最终敲定展示的广告信息，并返回到站长。 3. 特点 快速接入各种广告源、产品 快速验证广告的不同样式、调整广告页面布局 快速调整广告策略 精准的用户画像刻画 准确的广告推荐 分钟级数据监控 支持海量数据细粒度的多维数据查询 ####【扩展阅读】http://www.10tiao.com/html/488/201712/2247485109/1.html]]></content>
+      <categories>
+        <category>计算广告</category>
+      </categories>
+      <tags>
+        <tag>计算广告</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[广告名词解释-DSP]]></title>
+    <url>%2F2019%2F04%2F10%2F%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A%2F%E5%B9%BF%E5%91%8A%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A-DSP%2F</url>
+    <content type="text"><![CDATA[DSP（Demand-Side Platform）需求方平台 1. 定义需求方平台允许广告客户和广告机构更方便以及更有效地购买广告库存，因为该平台汇集了各种广告交易平台，广告网络，供应方平台，甚至媒体的库存。其实就是为甲方提供了跨媒介跨平台跨终端广告投放平台。(百度百科) 2. 运行机制从普通用户在浏览器中地址栏输入网站的网址，到用户看到页面上的内容和广告这短短几百毫秒之内，就需要发生了好几个网络往返(Round Trip)的信息交换。 Ad Exchange首先要向DSP发竞价(bidding)请求，告知DSP这次曝光的属性，如物料的尺寸、广告位出现的URL和类别、以及用户的Cookie ID等；DSP接到竞价请求后，也必须在几十毫秒之内决定是否竞价这次曝光, 如果决定竞价，出什么样的价格，然后把竞价的响应发回到Ad Exchange。 如果Ad Exchange判定该DSP赢得了该次竞价，要在极短时间内把DSP所代表的广告主的广告迅速送到用户的浏览器上。 DSP在整个过程中，通过运用人群定向技术分析，所得出的分析结果将直接影响广告主的广告投放效果。 3. 特点 能够整合、优化、管理不同渠道的流量 真正实现受众购买，拥有先进的用户定向(Audience Targeting)技术。 拥有强大的RTB(Real-Time Bidding)的基础设施和能力。 全面统一的数据报表 扩展阅读https://www.jianshu.com/p/0d14c0faf531?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation]]></content>
+      <categories>
+        <category>计算广告</category>
+      </categories>
+      <tags>
+        <tag>计算广告</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[广告名词解释-RTB]]></title>
+    <url>%2F2019%2F04%2F10%2F%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A%2F%E5%B9%BF%E5%91%8A%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A-RTB%2F</url>
+    <content type="text"><![CDATA[RTB（Real Time Bidding）实时竞价 1. 定义一种利用第三方技术在数以百万计的网站上，针对每个用户展示行为进行评估以及出价的竞价技术(百度百科) 2. 运行机制四个主体角色：广告主（Advertiser）、DSP（DemandSidePlatform，需求方平台）、广告交易平台（Ad Exchange）、互联网媒体 整体运行机制：广告主将需求放到dsp平台上，互联网媒体将自己的广告流量资源放到广告交易平台，dsp通过与广告交易平台的技术对接完成竞价购买。 当用户访问网站时，浏览痕迹通过cookie记录，SSP即向Ad Exchange广告交易平台发送用户信息，随后广告位的具体信息则会经过DMP的分析匹配后发送给DSP，DSP将对此进行竞价，价高者会获得这个广告展现机会，并被目标用户看到 3. 特点精准营销、技术要求高]]></content>
+      <categories>
+        <category>计算广告</category>
+      </categories>
+      <tags>
+        <tag>计算广告</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Principles of management]]></title>
+    <url>%2F2019%2F03%2F30%2FBusiness%2Fmanagement%2FPrinciples%20of%20management-02%2F</url>
+    <content type="text"></content>
+      <categories>
+        <category>Business</category>
+      </categories>
+      <tags>
+        <tag>management</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[【Golang零基础入门】05 接口]]></title>
     <url>%2F2019%2F03%2F20%2FGolang%2F%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%2F05%20%E6%8E%A5%E5%8F%A3%2F</url>
     <content type="text"><![CDATA[什么是接口 接口是行为方法的抽象与概括 接口只有方法声明，不用和实现的细节绑定在一起，也没有数据字段 接口是隐式实现的，只要某个类型拥有该接口的所有方法，就算是接口实现，无需像其他语言里的implements显示声明 12345678910111213141516171819type action interface &#123; run()&#125;type cat struct &#123; name string&#125;func (c cat)run() &#123; fmt.Println("Run " + c.name)&#125;type dog struct &#123; name string&#125;func (d dog)run()&#123; fmt.Println("Run " + d.name)&#125; 嵌入接口我们上次说结构体的时候，已经说过结构体是能够嵌入的，接口也是可以嵌入的，例如animal嵌入了action、display接口 123456789101112131415161718192021222324type animal interface &#123; action display&#125;type action interface &#123; run()&#125;type display interface &#123; color() string&#125;type cat struct &#123; name string&#125;func (c cat)run() &#123; fmt.Println("Run " + c.name)&#125;func (c cat)color() string &#123; return "Grey"&#125; 类型断言断言类型的语法：x.(T)，这里x表示一个接口的类型，T表示一个类型（也可为接口类型）。一个类型断言检查一个接口对象x的动态类型是否和断言的类型T匹配。 如果类型比较少的话，可以用if ok pattern 1234567func assertCat(a animal) &#123; if catA, ok := a.(cat); ok &#123; fmt.Println("Animal : " + catA.name) return &#125; fmt.Println("Unknow")&#125; 如果类型较多的情况可以使用switch case 12345678func assertAnimal(a animal) &#123; switch v := a.(type) &#123; case cat: fmt.Println("Animal: " + v.name) default: fmt.Println("Unknown animal") &#125;&#125; 多态我们在实现多态的时候，可以直接做一层封装，接受接口的实例，这样便实现了类似抽象工厂模式 12345678910func animalRun(a animal) &#123; a.run()&#125;func main() &#123; catA := cat&#123;"cat"&#125; dogA := dog&#123;"dog"&#125; animalRun(catA) animalRun(dogA)&#125;]]></content>
@@ -86,8 +163,8 @@
         <category>Zookeeper</category>
       </categories>
       <tags>
-        <tag>分布式</tag>
         <tag>Zookeeper</tag>
+        <tag>分布式</tag>
       </tags>
   </entry>
   <entry>
@@ -98,8 +175,8 @@
         <category>Zookeeper</category>
       </categories>
       <tags>
-        <tag>分布式</tag>
         <tag>Zookeeper</tag>
+        <tag>分布式</tag>
       </tags>
   </entry>
   <entry>
@@ -110,8 +187,8 @@
         <category>Kafka</category>
       </categories>
       <tags>
-        <tag>Kafka</tag>
         <tag>分布式</tag>
+        <tag>Kafka</tag>
       </tags>
   </entry>
   <entry>
@@ -134,8 +211,8 @@
         <category>Zookeeper</category>
       </categories>
       <tags>
-        <tag>分布式</tag>
         <tag>Zookeeper</tag>
+        <tag>分布式</tag>
       </tags>
   </entry>
   <entry>
@@ -146,8 +223,8 @@
         <category>Zookeeper</category>
       </categories>
       <tags>
-        <tag>分布式</tag>
         <tag>Zookeeper</tag>
+        <tag>分布式</tag>
       </tags>
   </entry>
   <entry>
