@@ -373,7 +373,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/03/07/MySQL/MySQL体系结构/">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/12/ElasticSearch/ES分布式存储/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Craze lee">
@@ -393,7 +393,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2019/03/07/MySQL/MySQL体系结构/" class="post-title-link" itemprop="url">【MySQL 原理】01 体系结构</a>
+                <a href="/2019/04/12/ElasticSearch/ES分布式存储/" class="post-title-link" itemprop="url">Elastic Search 分布式特性</a>
               
             
           </h1>
@@ -418,7 +418,7 @@
                 
               
 
-              <time title="创建时间：2019-03-07 19:59:08 / 修改时间：20:51:57" itemprop="dateCreated datePublished" datetime="2019-03-07T19:59:08+08:00">2019-03-07</time>
+              <time title="创建时间：2019-04-12 14:52:00 / 修改时间：15:32:52" itemprop="dateCreated datePublished" datetime="2019-04-12T14:52:00+08:00">2019-04-12</time>
             
 
             
@@ -440,14 +440,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/MySQL/原理分析/" itemprop="url" rel="index"><span itemprop="name">原理分析</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a></span>
 
                 
                 
@@ -466,8 +459,8 @@
                 </span>
             
                 <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/03/07/MySQL/MySQL体系结构/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/03/07/MySQL/MySQL体系结构/" itemprop="commentCount"></span>
+                <a href="/2019/04/12/ElasticSearch/ES分布式存储/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/12/ElasticSearch/ES分布式存储/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -496,16 +489,30 @@
 
       
         
-          <h2 id="MySQL体系结构"><a href="#MySQL体系结构" class="headerlink" title="MySQL体系结构"></a>MySQL体系结构</h2><p><img src="/images/15519597195054.jpg" alt><br>–摘自MySQL官方手册</p>
-          <!--noindex-->
           
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/03/07/MySQL/MySQL体系结构/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
+            <p>当索引一个文档的时候，文档会被存储到一个主分片中。</p>
+<p>路由公式：</p>
+<p><code>shard = hash(routing) % number_of_primary_shards</code></p>
+<p>主分片和副分片交互</p>
+<p>可以发送请求到集群中的任一节点。 每个节点都有能力处理任意请求。 每个节点都知道集群中任一文档位置，所以可以直接将请求转发到需要的节点上。</p>
+<p>当发送请求的时候， 为了扩展负载，更好的做法是轮询集群中所有的节点。</p>
+<p>新建、索引和删除单个文档<br><img src="/images/15550540264842.jpg" alt></p>
+<p>以下是在主副分片和任何副本分片上面 成功新建，索引和删除文档所需要的步骤顺序：</p>
+<p>客户端向 Node 1 发送新建、索引或者删除请求。<br>节点使用文档的 _id 确定文档属于分片 0 。请求会被转发到 Node 3<code>，因为分片 0 的主分片目前被分配在</code>Node 3 上。<br>Node 3 在主分片上面执行请求。如果成功了，它将请求并行转发到 Node 1 和 Node 2 的副本分片上。一旦所有的副本分片都报告成功, Node 3 将向协调节点报告成功，协调节点向客户端报告成功。</p>
+<p>读取文档<br><img src="/images/15550540841264.jpg" alt><br>以下是从主分片或者副本分片检索文档的步骤顺序：</p>
+<p>1、客户端向 Node 1 发送获取请求。</p>
+<p>2、节点使用文档的 _id 来确定文档属于分片 0 。分片 0 的副本分片存在于所有的三个节点上。 在这种情况下，它将请求转发到 Node 2 。</p>
+<p>3、Node 2 将文档返回给 Node 1 ，然后将文档返回给客户端。</p>
+<p>在处理读取请求时，协调结点在每次请求的时候都会通过轮询所有的副本分片来达到负载均衡。</p>
+<p>mget读取多个文档</p>
+<p><img src="/images/15550542254892.jpg" alt></p>
+<p>以下是使用单个 mget 请求取回多个文档所需的步骤顺序：<br>客户端向 Node 1 发送 mget 请求。<br>Node 1 为每个分片构建多文档获取请求，然后<strong>并行转发</strong>这些请求到托管在每个所需的主分片或者副本分片的节点上。一旦收到所有答复， Node 1 构建响应并将其返回给客户端。</p>
+<p>使用 bulk 修改多个文档</p>
+<p><img src="/images/15550543644212.jpg" alt></p>
+<p>bulk API 按如下步骤顺序执行：</p>
+<p>客户端向 Node 1 发送 bulk 请求。<br>Node 1 为每个节点创建一个批量请求，并将这些请求并行转发到每个包含主分片的节点主机。<br>主分片一个接一个按顺序执行每个操作。当每个操作成功时，主分片并行转发新文档（或删除）到副本分片，然后执行下一个操作。 一旦所有的副本分片报告所有操作成功，该节点将向协调节点报告成功，协调节点将这些响应收集整理并返回给客户端。<br>bulk API 还可以在整个批量请求的最顶层使用 consistency 参数，以及在每个请求中的元数据中使用 routing 参数。</p>
+
           
-          <!--/noindex-->
         
       
     </div>
@@ -528,6 +535,12 @@
     
 
     
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -564,7 +577,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/03/06/Golang/零基础入门/02 类型与变量/">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/11/ElasticSearch/ES数据输入与输出/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Craze lee">
@@ -584,7 +597,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2019/03/06/Golang/零基础入门/02 类型与变量/" class="post-title-link" itemprop="url">【Golang零基础入门】02 变量与类型</a>
+                <a href="/2019/04/11/ElasticSearch/ES数据输入与输出/" class="post-title-link" itemprop="url">Elastic Search 分布式特性</a>
               
             
           </h1>
@@ -609,7 +622,7 @@
                 
               
 
-              <time title="创建时间：2019-03-06 14:59:08" itemprop="dateCreated datePublished" datetime="2019-03-06T14:59:08+08:00">2019-03-06</time>
+              <time title="创建时间：2019-04-11 18:30:00" itemprop="dateCreated datePublished" datetime="2019-04-11T18:30:00+08:00">2019-04-11</time>
             
 
             
@@ -626,7 +639,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-03-19 17:49:06" itemprop="dateModified" datetime="2019-03-19T17:49:06+08:00">2019-03-19</time>
+                <time title="修改时间：2019-04-12 14:46:40" itemprop="dateModified" datetime="2019-04-12T14:46:40+08:00">2019-04-12</time>
               
             
           </span>
@@ -643,14 +656,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Golang/零基础入门/" itemprop="url" rel="index"><span itemprop="name">零基础入门</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a></span>
 
                 
                 
@@ -669,8 +675,8 @@
                 </span>
             
                 <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/03/06/Golang/零基础入门/02 类型与变量/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/03/06/Golang/零基础入门/02 类型与变量/" itemprop="commentCount"></span>
+                <a href="/2019/04/11/ElasticSearch/ES数据输入与输出/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/11/ElasticSearch/ES数据输入与输出/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -699,17 +705,30 @@
 
       
         
-          <h2 id="变量命名"><a href="#变量命名" class="headerlink" title="变量命名"></a>变量命名</h2><p>我们都知道其他面向对象的语言，都是用关键词public、private、protected来标记可见性。但在GO里，直接用首字母的大小写来决定可见性，大写对外可见，小写仅包内可见。例如fmt包的Printf函数在fmt包外部访问。</p>
-<p>Golang习惯<strong>驼峰式命名</strong>，例如isExisits()</p>
-          <!--noindex-->
           
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/03/06/Golang/零基础入门/02 类型与变量/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
+            <p>在 Elasticsearch 中， 每个字段的所有数据 都是 默认被索引的 。 即每个字段都有为了快速检索设置的专用倒排索引。而且，不像其他多数的数据库，它能在 同一个查询中 使用所有这些倒排索引，并以惊人的速度返回结果。</p>
+<p>文档</p>
+<p>一个对象仅仅是类似于 hash 、 hashmap 、字典或者关联数组的 JSON 对象，对象中也可以嵌套其他的对象。 对象可能包含了另外一些对象。</p>
+<p>在 Elasticsearch 中，术语 文档 有着特定的含义。它是指最顶层或者根对象, 这个根对象被序列化成 JSON 并存储到 Elasticsearch 中，指定了唯一 ID。</p>
+<p>文档元数据<br>_index：一个 索引 应该是因共同的特性被分组到一起的文档集合。类比数据库<br>_type：在索引中对数据进行逻辑分区。类比数据表<br>_id：当它和 _index 以及 _type 组合就可以唯一确定 Elasticsearch 中的一个文档。类比数据唯一标识</p>
+<p>写数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">PUT /&#123;index&#125;/&#123;type&#125;/&#123;id&#125;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;field&quot;: &quot;value&quot;,</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># For Example</span><br><span class="line"></span><br><span class="line"> curl -X PUT &quot;10.96.83.188:9200/website/blog/123&quot; -H &apos;Content-Type: application/json&apos; -d&apos;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;My first blog entry&quot;,</span><br><span class="line">  &quot;text&quot;:  &quot;Just trying this out...&quot;,</span><br><span class="line">  &quot;date&quot;:  &quot;2014/01/01&quot;</span><br><span class="line">&#125;</span><br><span class="line">&apos;</span><br><span class="line">&#123;&quot;_index&quot;:&quot;website&quot;,&quot;_type&quot;:&quot;blog&quot;,&quot;_id&quot;:&quot;123&quot;,&quot;_version&quot;:1,&quot;result&quot;:&quot;created&quot;,</span><br><span class="line">&quot;_shards&quot;:&#123;&quot;total&quot;:2,&quot;successful&quot;:1,&quot;failed&quot;:0&#125;,&quot;created&quot;:true&#125;</span><br><span class="line"></span><br><span class="line"># 如果没有指定ID，Elasticsearch 可以帮我们自动生成 ID </span><br><span class="line">curl -X POST &quot;10.96.83.188:9200/website/blog/&quot; -H &apos;Content-Type: application/json&apos; -d&apos;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;My second blog entry&quot;,</span><br><span class="line">  &quot;text&quot;:  &quot;Still trying this out...&quot;,</span><br><span class="line">  &quot;date&quot;:  &quot;2014/01/01&quot;</span><br><span class="line">&#125;</span><br><span class="line">&apos;</span><br><span class="line">&#123;&quot;_index&quot;:&quot;website&quot;,&quot;_type&quot;:&quot;blog&quot;,&quot;_id&quot;:&quot;AWoPmj2eBvBN4YG5RXks&quot;,&quot;_version&quot;:1,</span><br><span class="line">&quot;result&quot;:&quot;created&quot;,&quot;_shards&quot;:&#123;&quot;total&quot;:2,&quot;successful&quot;:1,&quot;failed&quot;:0&#125;,&quot;created&quot;:true&#125;</span><br></pre></td></tr></table></figure>
+<p>读数据<br>pretty 为了让输出更友好</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">#取所有字段</span><br><span class="line">curl -X GET &quot;10.96.83.188:9200/website/blog/123?pretty&quot;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;_index&quot; : &quot;website&quot;,</span><br><span class="line">  &quot;_type&quot; : &quot;blog&quot;,</span><br><span class="line">  &quot;_id&quot; : &quot;123&quot;,</span><br><span class="line">  &quot;_version&quot; : 1,</span><br><span class="line">  &quot;found&quot; : true,</span><br><span class="line">  &quot;_source&quot; : &#123;</span><br><span class="line">    &quot;title&quot; : &quot;My first blog entry&quot;,</span><br><span class="line">    &quot;text&quot; : &quot;Just trying this out...&quot;,</span><br><span class="line">    &quot;date&quot; : &quot;2014/01/01&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 取部分字段</span><br><span class="line">curl -X GET &quot;10.96.83.188:9200/website/blog/123?_source=title,text&amp;pretty&quot;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;_index&quot; : &quot;website&quot;,</span><br><span class="line">  &quot;_type&quot; : &quot;blog&quot;,</span><br><span class="line">  &quot;_id&quot; : &quot;123&quot;,</span><br><span class="line">  &quot;_version&quot; : 1,</span><br><span class="line">  &quot;found&quot; : true,</span><br><span class="line">  &quot;_source&quot; : &#123;</span><br><span class="line">    &quot;text&quot; : &quot;Just trying this out...&quot;,</span><br><span class="line">    &quot;title&quot; : &quot;My first blog entry&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 只取数据，不去元数据</span><br><span class="line"> curl -X GET &quot;10.96.83.188:9200/website/blog/123/_source&quot;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;My first blog entry&quot;,</span><br><span class="line">  &quot;text&quot;:  &quot;Just trying this out...&quot;,</span><br><span class="line">  &quot;date&quot;:  &quot;2014/01/01&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 读取多个数据</span><br><span class="line">curl -X GET &quot;10.96.83.188:9200/_mget?pretty&quot; -H &apos;Content-Type: application/json&apos; -d&apos;</span><br><span class="line">&#123;</span><br><span class="line">   &quot;docs&quot; : [</span><br><span class="line">      &#123;</span><br><span class="line">         &quot;_index&quot; : &quot;website&quot;,</span><br><span class="line">         &quot;_type&quot; :  &quot;blog&quot;,</span><br><span class="line">         &quot;_id&quot; :    1</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         &quot;_index&quot; : &quot;website&quot;,</span><br><span class="line">         &quot;_type&quot; :  &quot;blog&quot;,</span><br><span class="line">         &quot;_id&quot; :    124</span><br><span class="line">      &#125;</span><br><span class="line">   ]</span><br><span class="line">&#125;</span><br><span class="line">&apos;</span><br></pre></td></tr></table></figure>
+<p>判断文档是否存在(200存在，404不存在)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ curl -I -XHEAD &quot;10.96.83.188:9200/website/blog/123/&quot;</span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">content-type: text/plain; charset=UTF-8</span><br><span class="line">content-length: 0</span><br><span class="line"></span><br><span class="line">$ curl -I -XHEAD &quot;10.96.83.188:9200/website/blog/124/&quot;</span><br><span class="line">HTTP/1.1 404 Not Found</span><br><span class="line">content-type: text/plain; charset=UTF-8</span><br><span class="line">content-length: 0</span><br></pre></td></tr></table></figure>
+<p>更新操作<br><img src="/images/15550406833471.jpg" alt></p>
+<p>创建新文档</p>
+<p>要么id保证唯一，要么不带id新建，由ES自动创建<br>创建时，带上_create，保证只新增，如果已存在则报错</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl -X PUT &quot;10.96.83.188:9200/website/blog/123/_create&quot; -H &apos;Content-Type: application/json&apos; -d&apos;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;My first blog entry&quot;,</span><br><span class="line">  &quot;text&quot;:  &quot;I am starting to get the hang of this...&quot;,</span><br><span class="line">  &quot;date&quot;:  &quot;2014/01/02&quot;</span><br><span class="line">&#125;</span><br><span class="line">&apos;</span><br><span class="line"></span><br><span class="line">&#123;&quot;error&quot;:&#123;&quot;root_cause&quot;:[&#123;&quot;type&quot;:&quot;version_conflict_engine_exception&quot;,&quot;reason&quot;:&quot;[blog][123]: version conflict, document already exists (current version [2])&quot;,&quot;index_uuid&quot;:&quot;_sBTT-DdSnKytaOhbXEYfw&quot;,&quot;shard&quot;:&quot;0&quot;,&quot;index&quot;:&quot;website&quot;&#125;],&quot;type&quot;:&quot;version_conflict_engine_exception&quot;,&quot;reason&quot;:&quot;[blog][123]: version conflict, document already exists (current version [2])&quot;,&quot;index_uuid&quot;:&quot;_sBTT-DdSnKytaOhbXEYfw&quot;,&quot;shard&quot;:&quot;0&quot;,&quot;index&quot;:&quot;website&quot;&#125;,&quot;status&quot;:409&#125;</span><br></pre></td></tr></table></figure>
+<p>删除文档</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl -X DELETE &quot;10.96.83.188:9200/website/blog/123&quot;</span><br><span class="line">&#123;&quot;found&quot;:true,&quot;_index&quot;:&quot;website&quot;,&quot;_type&quot;:&quot;blog&quot;,&quot;_id&quot;:&quot;123&quot;,&quot;_version&quot;:3,&quot;result&quot;:&quot;deleted&quot;,&quot;_shards&quot;:&#123;&quot;total&quot;:2,&quot;successful&quot;:1,&quot;failed&quot;:0&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>更新部分文档</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST &quot;10.96.83.188:9200/website/blog/1/_update&quot; -H &apos;Content-Type: application/json&apos; -d&apos;</span><br><span class="line">&#123;</span><br><span class="line">   &quot;doc&quot; : &#123;</span><br><span class="line">      &quot;tags&quot; : [ &quot;testing&quot; ],</span><br><span class="line">      &quot;views&quot;: 0</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line">&apos;</span><br><span class="line"></span><br><span class="line">curl -X GET &quot;10.96.83.188:9200/website/blog/1?pretty&quot;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;_index&quot; : &quot;website&quot;,</span><br><span class="line">  &quot;_type&quot; : &quot;blog&quot;,</span><br><span class="line">  &quot;_id&quot; : &quot;1&quot;,</span><br><span class="line">  &quot;_version&quot; : 3,</span><br><span class="line">  &quot;found&quot; : true,</span><br><span class="line">  &quot;_source&quot; : &#123;</span><br><span class="line">    &quot;title&quot; : &quot;My first blog entry&quot;,</span><br><span class="line">    &quot;text&quot; : &quot;Starting to get the hang of this...&quot;,</span><br><span class="line">    &quot;views&quot; : 0,</span><br><span class="line">    &quot;tags&quot; : [</span><br><span class="line">      &quot;testing&quot;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>乐观并发控制</p>
+<p><img src="/images/15550501111236.jpg" alt></p>
+
           
-          <!--/noindex-->
         
       
     </div>
@@ -732,6 +751,12 @@
     
 
     
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -768,7 +793,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/03/06/Golang/零基础入门/01 Hello, GO/">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/11/ElasticSearch/ES分布式特性/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Craze lee">
@@ -788,7 +813,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2019/03/06/Golang/零基础入门/01 Hello, GO/" class="post-title-link" itemprop="url">【Golang零基础入门】01 Hello，Go</a>
+                <a href="/2019/04/11/ElasticSearch/ES分布式特性/" class="post-title-link" itemprop="url">Elastic Search 分布式特性</a>
               
             
           </h1>
@@ -813,198 +838,7 @@
                 
               
 
-              <time title="创建时间：2019-03-06 10:59:08 / 修改时间：11:25:01" itemprop="dateCreated datePublished" datetime="2019-03-06T10:59:08+08:00">2019-03-06</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Golang/零基础入门/" itemprop="url" rel="index"><span itemprop="name">零基础入门</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-              
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-            
-                <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/03/06/Golang/零基础入门/01 Hello, GO/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/03/06/Golang/零基础入门/01 Hello, GO/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="一、第一个Go程序：hello-go"><a href="#一、第一个Go程序：hello-go" class="headerlink" title="一、第一个Go程序：hello.go"></a>一、第一个Go程序：hello.go</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	fmt.Println(<span class="string">"Hello, Go"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/03/06/Golang/零基础入门/01 Hello, GO/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    <div>
-      
-    </div>
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/03/02/Zookeeper/Zookeeper 配合Golang实现配置中心/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Craze lee">
-      <meta itemprop="description" content="做个有温度的人">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="念念不忘 必有回响">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/03/02/Zookeeper/Zookeeper 配合Golang实现配置中心/" class="post-title-link" itemprop="url">Zookeeper 配置中心实现（Golang）</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-03-02 12:00:00" itemprop="dateCreated datePublished" datetime="2019-03-02T12:00:00+08:00">2019-03-02</time>
+              <time title="创建时间：2019-04-11 18:00:00" itemprop="dateCreated datePublished" datetime="2019-04-11T18:00:00+08:00">2019-04-11</time>
             
 
             
@@ -1021,7 +855,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-03-06 11:35:43" itemprop="dateModified" datetime="2019-03-06T11:35:43+08:00">2019-03-06</time>
+                <time title="修改时间：2019-04-25 10:44:42" itemprop="dateModified" datetime="2019-04-25T10:44:42+08:00">2019-04-25</time>
               
             
           </span>
@@ -1038,7 +872,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Zookeeper/" itemprop="url" rel="index"><span itemprop="name">Zookeeper</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a></span>
 
                 
                 
@@ -1057,391 +891,8 @@
                 </span>
             
                 <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/03/02/Zookeeper/Zookeeper 配合Golang实现配置中心/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/03/02/Zookeeper/Zookeeper 配合Golang实现配置中心/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>一个乞丐版自更新配置中心，更新配置后，能在各个服务器实现更新</p>
-<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p><img src="/images/15514994232526.jpg" alt></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/03/02/Zookeeper/Zookeeper 配合Golang实现配置中心/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    <div>
-      
-    </div>
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/02/28/Zookeeper/Zookeeper集群搭建/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Craze lee">
-      <meta itemprop="description" content="做个有温度的人">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="念念不忘 必有回响">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/02/28/Zookeeper/Zookeeper集群搭建/" class="post-title-link" itemprop="url">Zookeeper 集群搭建</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-02-28 11:00:00" itemprop="dateCreated datePublished" datetime="2019-02-28T11:00:00+08:00">2019-02-28</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-03-02 12:29:08" itemprop="dateModified" datetime="2019-03-02T12:29:08+08:00">2019-03-02</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Zookeeper/" itemprop="url" rel="index"><span itemprop="name">Zookeeper</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-              
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-            
-                <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/02/28/Zookeeper/Zookeeper集群搭建/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/02/28/Zookeeper/Zookeeper集群搭建/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>用三台机器搭建一个Zookeeper集群</p>
-<h2 id="新增myid文件"><a href="#新增myid文件" class="headerlink" title="新增myid文件"></a>新增myid文件</h2><p>用于配置当前IP对应的编号。<br>可以查看/conf/zoo.cfg的dataDir路径，在该路径新增myid，内容就只协商对应的编号就行<br><img src="/images/15514264985081.jpg" alt></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cat /tmp/zookeeper/myid</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/02/28/Zookeeper/Zookeeper集群搭建/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    <div>
-      
-    </div>
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/02/27/Kafka/Kafka入门/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Craze lee">
-      <meta itemprop="description" content="做个有温度的人">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="念念不忘 必有回响">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/02/27/Kafka/Kafka入门/" class="post-title-link" itemprop="url">Kafka 入门介绍</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-02-27 16:00:08 / 修改时间：16:38:06" itemprop="dateCreated datePublished" datetime="2019-02-27T16:00:08+08:00">2019-02-27</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-              
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-            
-                <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/02/27/Kafka/Kafka入门/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/02/27/Kafka/Kafka入门/" itemprop="commentCount"></span>
+                <a href="/2019/04/11/ElasticSearch/ES分布式特性/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/11/ElasticSearch/ES分布式特性/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1471,418 +922,24 @@
       
         
           
-            
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    <div>
-      
-    </div>
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/02/26/每日一算/下一个更大元素 I/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Craze lee">
-      <meta itemprop="description" content="做个有温度的人">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="念念不忘 必有回响">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/02/26/每日一算/下一个更大元素 I/" class="post-title-link" itemprop="url">下一个最大元素 I</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-02-26 17:54:08" itemprop="dateCreated datePublished" datetime="2019-02-26T17:54:08+08:00">2019-02-26</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-02-27 14:24:51" itemprop="dateModified" datetime="2019-02-27T14:24:51+08:00">2019-02-27</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/每日一算/" itemprop="url" rel="index"><span itemprop="name">每日一算</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-              
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-            
-                <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/02/26/每日一算/下一个更大元素 I/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/02/26/每日一算/下一个更大元素 I/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="题源"><a href="#题源" class="headerlink" title="题源"></a>题源</h2><p>LeetCode题目：<a href="https://leetcode-cn.com/problems/next-greater-element-i/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/next-greater-element-i/</a></p>
-<blockquote>
-<p>给定两个没有重复元素的数组 nums1 和 nums2 ，其中nums1 是 nums2 的子集。找到 nums1 中每个元素在 nums2 中的下一个比其大的值。</p>
-</blockquote>
-<blockquote>
-<p>nums1 中数字 x 的下一个更大元素是指 x 在 nums2 中对应位置的右边的第一个比 x 大的元素。如果不存在，对应位置输出-1。</p>
-</blockquote>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/02/26/每日一算/下一个更大元素 I/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    <div>
-      
-    </div>
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/02/25/每日一面/Zookeeper面试/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Craze lee">
-      <meta itemprop="description" content="做个有温度的人">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="念念不忘 必有回响">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/02/25/每日一面/Zookeeper面试/" class="post-title-link" itemprop="url">Zookeeper 面试题</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-02-25 20:00:08" itemprop="dateCreated datePublished" datetime="2019-02-25T20:00:08+08:00">2019-02-25</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-02-26 11:56:09" itemprop="dateModified" datetime="2019-02-26T11:56:09+08:00">2019-02-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Zookeeper/" itemprop="url" rel="index"><span itemprop="name">Zookeeper</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-              
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-            
-                <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/02/25/每日一面/Zookeeper面试/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/02/25/每日一面/Zookeeper面试/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="1-Zookeeper的用途，选举的原理是什么？"><a href="#1-Zookeeper的用途，选举的原理是什么？" class="headerlink" title="1. Zookeeper的用途，选举的原理是什么？"></a>1. Zookeeper的用途，选举的原理是什么？</h2><p><strong>用途</strong></p>
-<ol>
-<li>分布式锁</li>
-<li>服务注册和发现<ul>
-<li>利用Znode和Watcher，可以实现分布式服务的注册和发现。最著名的应用就是阿里的分布式RPC框架Dubbo。</li>
+            <p>Elasticsearch 可以横向扩展至数百（甚至数千）的服务器节点，同时可以处理PB级数据。<br>Elasticsearch 天生就是分布式的，并且在设计时屏蔽了分布式的复杂性。<br>这里列举了一些在后台自动执行的操作：</p>
+<ul>
+<li>分配文档到不同的容器 或 分片 中，文档可以储存在一个或多个节点中</li>
+<li>按集群节点来均衡分配这些分片，从而对索引和搜索过程进行负载均衡</li>
+<li>复制每个分片以支持数据冗余，从而防止硬件故障导致的数据丢失</li>
+<li>将集群中任一节点的请求路由到存有相关数据的节点</li>
+<li>集群扩容时无缝整合新节点，重新分配分片以便从离群节点恢复</li>
 </ul>
-</li>
-<li>共享配置和状态信息<ul>
-<li>Redis的分布式解决方案Codis（豌豆荚），就利用了Zookeeper来存放数据路由表和 codis-proxy 节点的元信息。同时 codis-config 发起的命令都会通过 ZooKeeper 同步到各个存活的 codis-proxy。 </li>
-</ul>
-</li>
-<li>软负载均衡 </li>
-</ol>
-          <!--noindex-->
+<p>Elasticsearch 是利用分片将数据分发到集群内各处的。分片是数据的容器，文档保存在分片内，分片又被分配到集群内的各个节点里。 当你的集群规模扩大或者缩小时， Elasticsearch 会自动的在各节点中迁移分片，使得数据仍然均匀分布在集群里。</p>
+<p>一个分片可以是 主 分片或者 副本 分片。 索引内任意一个文档都归属于一个主分片，所以主分片的数目决定着索引能够保存的最大数据量。</p>
+<p>一个副本分片只是一个主分片的拷贝。 副本分片作为硬件故障时保护数据不丢失的冗余备份，并为搜索和返回文档等读操作提供服务。</p>
+<p>扩容<br>主分片的数目在索引创建时 就已经确定了下来。实际上，这个数目定义了这个索引能够 存储 的最大数据量。<br>但是，读操作——搜索和返回数据——可以同时被主分片 或 副本分片所处理，所以当你拥有越多的副本分片时，也将拥有越高的吞吐量。</p>
+<p>当然，如果只是在相同节点数目的集群上增加更多的副本分片并不能提高性能，因为每个分片从节点上获得的资源会变少。 你需要增加更多的硬件资源来提升吞吐量。</p>
+<p><img src="/images/15549740773534.jpg" alt></p>
+<p>故障<br><img src="/images/15549743011642.jpg" alt></p>
+<p>关闭的节点是一个主节点。而集群必须拥有一个主节点来保证正常工作，所以发生的第一件事情就是选举一个新的主节点： Node 2 。<br>新的主节点立即将这些分片在 Node 2 和 Node 3 上对应的副本分片提升为主分片， 此时集群的状态将会为 yellow 。 这个提升主分片的过程是瞬间发生的，如同按下一个开关一般。</p>
+
           
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/02/25/每日一面/Zookeeper面试/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
         
       
     </div>
@@ -1905,6 +962,12 @@
     
 
     
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -1941,7 +1004,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/02/25/Zookeeper/Zookeeper入门/">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/11/ElasticSearch/ES基础介绍/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Craze lee">
@@ -1961,7 +1024,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2019/02/25/Zookeeper/Zookeeper入门/" class="post-title-link" itemprop="url">Zookeeper 入门介绍</a>
+                <a href="/2019/04/11/ElasticSearch/ES基础介绍/" class="post-title-link" itemprop="url">Elastic Search 基础介绍</a>
               
             
           </h1>
@@ -1986,7 +1049,7 @@
                 
               
 
-              <time title="创建时间：2019-02-25 19:00:08" itemprop="dateCreated datePublished" datetime="2019-02-25T19:00:08+08:00">2019-02-25</time>
+              <time title="创建时间：2019-04-11 17:00:00" itemprop="dateCreated datePublished" datetime="2019-04-11T17:00:00+08:00">2019-04-11</time>
             
 
             
@@ -2003,7 +1066,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-02-27 16:11:09" itemprop="dateModified" datetime="2019-02-27T16:11:09+08:00">2019-02-27</time>
+                <time title="修改时间：2019-04-25 10:44:05" itemprop="dateModified" datetime="2019-04-25T10:44:05+08:00">2019-04-25</time>
               
             
           </span>
@@ -2020,7 +1083,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Zookeeper/" itemprop="url" rel="index"><span itemprop="name">Zookeeper</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a></span>
 
                 
                 
@@ -2039,8 +1102,8 @@
                 </span>
             
                 <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/02/25/Zookeeper/Zookeeper入门/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/02/25/Zookeeper/Zookeeper入门/" itemprop="commentCount"></span>
+                <a href="/2019/04/11/ElasticSearch/ES基础介绍/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/11/ElasticSearch/ES基础介绍/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -2069,25 +1132,53 @@
 
       
         
-          <h2 id="Zookeeper"><a href="#Zookeeper" class="headerlink" title="Zookeeper"></a>Zookeeper</h2><p>文件系统 + 通知机制</p>
-<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ol>
-<li>一个领导者(Leader)，多个跟随者(Follower)组成的集群</li>
-<li>集群中<strong>只要有半数以上节点存活</strong>，Zookeeper集群就能正常服务</li>
-<li>全局数据一致性，每个server保存一份相同的副本，client无论链接哪个server，得到的数据都是一致的</li>
-<li>更新请求顺序执行，来自同一个client的请求按顺序执行</li>
-<li>数据更新<strong>原子性</strong>，一次数据更新要么成功要么失败</li>
-<li>实时性，在一定时间范围内，client能读到最新数据</li>
-</ol>
-<p><img src="/images/15510641008952.jpg" alt></p>
-          <!--noindex-->
           
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/02/25/Zookeeper/Zookeeper入门/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
+            <p>ElasticSearch 是一个分布式、可扩展、实时的搜索与数据分析引擎。</p>
+<h2 id="功能介绍"><a href="#功能介绍" class="headerlink" title="功能介绍"></a>功能介绍</h2><ul>
+<li><strong>全文搜索</strong></li>
+<li><strong>结构化数据的实时统计</strong></li>
+<li>数据分析</li>
+<li>复杂的语言处理</li>
+<li>地理位置和对象间关联关系</li>
+</ul>
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><ul>
+<li>Wikipedia 使用 Elasticsearch 提供带有高亮片段的全文搜索</li>
+<li>Stack Overflow 将地理位置查询融入全文检索中去，并且使用 more-like-this 接口去查找相关的问题与答案</li>
+<li>GitHub 使用 Elasticsearch 对1300亿行代码进行查询</li>
+</ul>
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
+<li>一个分布式的实时文档存储，每个字段 可以被索引与搜索</li>
+<li>一个分布式实时分析搜索引擎</li>
+<li>能胜任上百个服务节点的扩展，并支持 PB 级别的结构化或者非结构化数据</li>
+</ul>
+<h2 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h2><h4 id="索引结构分析"><a href="#索引结构分析" class="headerlink" title="索引结构分析"></a>索引结构分析</h4><p>路径 /megacorp/employee/1 包含了三部分的信息：</p>
+<p>megacorp：索引名称，<strong>类似数据库</strong><br>employee：类型名称，<strong>类似数据表</strong><br>1：特定雇员的ID，<strong>类似表里的ID</strong></p>
+<p><strong>写入</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl -X PUT &quot;localhost:9200/megacorp/employee/1&quot; -H &apos;Content-Type: application/json&apos; -d&apos;</span><br><span class="line">&#123;</span><br><span class="line">    &quot;first_name&quot; : &quot;John&quot;,</span><br><span class="line">    &quot;last_name&quot; :  &quot;Smith&quot;,</span><br><span class="line">    &quot;age&quot; :        25,</span><br><span class="line">    &quot;about&quot; :      &quot;I love to go rock climbing&quot;,</span><br><span class="line">    &quot;interests&quot;: [ &quot;sports&quot;, &quot;music&quot; ]</span><br><span class="line">&#125;</span><br><span class="line">&apos;</span><br></pre></td></tr></table></figure>
+<p><strong>查询</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">curl  &apos;localhost:9200/megacorp/employee/1?pretty&apos;</span><br><span class="line">&#123;&quot;_index&quot;:&quot;megacorp&quot;,&quot;_type&quot;:&quot;employee&quot;,&quot;_id&quot;:&quot;2&quot;,&quot;_version&quot;:1,&quot;found&quot;:true,&quot;_source&quot;:</span><br><span class="line">&#123;</span><br><span class="line">    &quot;first_name&quot; : &quot;John&quot;,</span><br><span class="line">    &quot;last_name&quot; :  &quot;Smith&quot;,</span><br><span class="line">    &quot;age&quot; :        25,</span><br><span class="line">    &quot;about&quot; :      &quot;I love to go rock climbing&quot;,</span><br><span class="line">    &quot;interests&quot;: [ &quot;sports&quot;, &quot;music&quot; ]</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>搜索</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET &quot;10.96.83.188:9200/megacorp/employee/_search&quot;</span><br><span class="line">&#123;&quot;took&quot;:71,&quot;timed_out&quot;:false,&quot;_shards&quot;:&#123;&quot;total&quot;:5,&quot;successful&quot;:5,&quot;failed&quot;:0&#125;,&quot;hits&quot;:&#123;&quot;total&quot;:3,&quot;max_score&quot;:1.0,&quot;hits&quot;:[&#123;&quot;_index&quot;:&quot;megacorp&quot;,&quot;_type&quot;:&quot;employee&quot;,&quot;_id&quot;:&quot;2&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:</span><br><span class="line">&#123;</span><br><span class="line">    &quot;first_name&quot; :  &quot;Jane&quot;,</span><br><span class="line">    &quot;last_name&quot; :   &quot;Smith&quot;,</span><br><span class="line">    &quot;age&quot; :         32,</span><br><span class="line">    &quot;about&quot; :       &quot;I like to collect rock albums&quot;,</span><br><span class="line">    &quot;interests&quot;:  [ &quot;music&quot; ]</span><br><span class="line">&#125;</span><br><span class="line">&#125;,&#123;&quot;_index&quot;:&quot;megacorp&quot;,&quot;_type&quot;:&quot;employee&quot;,&quot;_id&quot;:&quot;1&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:</span><br><span class="line">&#123;</span><br><span class="line">    &quot;first_name&quot; : &quot;John&quot;,</span><br><span class="line">    &quot;last_name&quot; :  &quot;Smith&quot;,</span><br><span class="line">    &quot;age&quot; :        25,</span><br><span class="line">    &quot;about&quot; :      &quot;I love to go rock climbing&quot;,</span><br><span class="line">    &quot;interests&quot;: [ &quot;sports&quot;, &quot;music&quot; ]</span><br><span class="line">&#125;</span><br><span class="line">&#125;,&#123;&quot;_index&quot;:&quot;megacorp&quot;,&quot;_type&quot;:&quot;employee&quot;,&quot;_id&quot;:&quot;3&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:</span><br><span class="line">&#123;</span><br><span class="line">    &quot;first_name&quot; :  &quot;Douglas&quot;,</span><br><span class="line">    &quot;last_name&quot; :   &quot;Fir&quot;,</span><br><span class="line">    &quot;age&quot; :         35,</span><br><span class="line">    &quot;about&quot;:        &quot;I like to build cabinets&quot;,</span><br><span class="line">    &quot;interests&quot;:  [ &quot;forestry&quot; ]</span><br><span class="line">&#125;</span><br><span class="line">&#125;]&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>简单查询 query_string</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET &quot;10.96.83.188:9200/megacorp/employee/_search?q=last_name:Smith&quot;</span><br><span class="line">&#123;&quot;took&quot;:31,&quot;timed_out&quot;:false,&quot;_shards&quot;:&#123;&quot;total&quot;:5,&quot;successful&quot;:5,&quot;failed&quot;:0&#125;,&quot;hits&quot;:&#123;&quot;total&quot;:2,&quot;max_score&quot;:0.2876821,&quot;hits&quot;:[&#123;&quot;_index&quot;:&quot;megacorp&quot;,&quot;_type&quot;:&quot;employee&quot;,&quot;_id&quot;:&quot;2&quot;,&quot;_score&quot;:0.2876821,&quot;_source&quot;:</span><br><span class="line">&#123;</span><br><span class="line">    &quot;first_name&quot; :  &quot;Jane&quot;,</span><br><span class="line">    &quot;last_name&quot; :   &quot;Smith&quot;,</span><br><span class="line">    &quot;age&quot; :         32,</span><br><span class="line">    &quot;about&quot; :       &quot;I like to collect rock albums&quot;,</span><br><span class="line">    &quot;interests&quot;:  [ &quot;music&quot; ]</span><br><span class="line">&#125;</span><br><span class="line">&#125;,&#123;&quot;_index&quot;:&quot;megacorp&quot;,&quot;_type&quot;:&quot;employee&quot;,&quot;_id&quot;:&quot;1&quot;,&quot;_score&quot;:0.2876821,&quot;_source&quot;:</span><br><span class="line">&#123;</span><br><span class="line">    &quot;first_name&quot; : &quot;John&quot;,</span><br><span class="line">    &quot;last_name&quot; :  &quot;Smith&quot;,</span><br><span class="line">    &quot;age&quot; :        25,</span><br><span class="line">    &quot;about&quot; :      &quot;I love to go rock climbing&quot;,</span><br><span class="line">    &quot;interests&quot;: [ &quot;sports&quot;, &quot;music&quot; ]</span><br><span class="line">&#125;</span><br><span class="line">&#125;]&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>查询表达式搜索 query</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET &quot;10.96.83.188:9200/megacorp/employee/_search&quot; -H &apos;Content-Type: application/json&apos; -d&apos;</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot; : &#123;</span><br><span class="line">        &quot;match&quot; : &#123;</span><br><span class="line">            &quot;last_name&quot; : &quot;Smith&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&apos;</span><br><span class="line"></span><br><span class="line">&#123;&quot;took&quot;:9,&quot;timed_out&quot;:false,&quot;_shards&quot;:&#123;&quot;total&quot;:5,&quot;successful&quot;:5,&quot;failed&quot;:0&#125;,&quot;hits&quot;:&#123;&quot;total&quot;:2,&quot;max_score&quot;:0.2876821,&quot;hits&quot;:[&#123;&quot;_index&quot;:&quot;megacorp&quot;,&quot;_type&quot;:&quot;employee&quot;,&quot;_id&quot;:&quot;2&quot;,&quot;_score&quot;:0.2876821,&quot;_source&quot;:</span><br><span class="line">&#123;</span><br><span class="line">    &quot;first_name&quot; :  &quot;Jane&quot;,</span><br><span class="line">    &quot;last_name&quot; :   &quot;Smith&quot;,</span><br><span class="line">    &quot;age&quot; :         32,</span><br><span class="line">    &quot;about&quot; :       &quot;I like to collect rock albums&quot;,</span><br><span class="line">    &quot;interests&quot;:  [ &quot;music&quot; ]</span><br><span class="line">&#125;</span><br><span class="line">&#125;,&#123;&quot;_index&quot;:&quot;megacorp&quot;,&quot;_type&quot;:&quot;employee&quot;,&quot;_id&quot;:&quot;1&quot;,&quot;_score&quot;:0.2876821,&quot;_source&quot;:</span><br><span class="line">&#123;</span><br><span class="line">    &quot;first_name&quot; : &quot;John&quot;,</span><br><span class="line">    &quot;last_name&quot; :  &quot;Smith&quot;,</span><br><span class="line">    &quot;age&quot; :        25,</span><br><span class="line">    &quot;about&quot; :      &quot;I love to go rock climbing&quot;,</span><br><span class="line">    &quot;interests&quot;: [ &quot;sports&quot;, &quot;music&quot; ]</span><br><span class="line">&#125;</span><br><span class="line">&#125;]&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>更复杂的搜索  过滤器 filter</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET &quot;10.96.83.188:9200/megacorp/employee/_search&quot; -H &apos;Content-Type: application/json&apos; -d&apos;</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot; : &#123;</span><br><span class="line">        &quot;bool&quot;: &#123;</span><br><span class="line">            &quot;must&quot;: &#123;</span><br><span class="line">                &quot;match&quot; : &#123;</span><br><span class="line">                    &quot;last_name&quot; : &quot;smith&quot;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            &quot;filter&quot;: &#123;</span><br><span class="line">                &quot;range&quot; : &#123;</span><br><span class="line">                    &quot;age&quot; : &#123; &quot;gt&quot; : 30 &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&apos;</span><br><span class="line">&#123;&quot;took&quot;:15,&quot;timed_out&quot;:false,&quot;_shards&quot;:&#123;&quot;total&quot;:5,&quot;successful&quot;:5,&quot;failed&quot;:0&#125;,&quot;hits&quot;:&#123;&quot;total&quot;:1,&quot;max_score&quot;:0.2876821,&quot;hits&quot;:[&#123;&quot;_index&quot;:&quot;megacorp&quot;,&quot;_type&quot;:&quot;employee&quot;,&quot;_id&quot;:&quot;2&quot;,&quot;_score&quot;:0.2876821,&quot;_source&quot;:</span><br><span class="line">&#123;</span><br><span class="line">    &quot;first_name&quot; :  &quot;Jane&quot;,</span><br><span class="line">    &quot;last_name&quot; :   &quot;Smith&quot;,</span><br><span class="line">    &quot;age&quot; :         32,</span><br><span class="line">    &quot;about&quot; :       &quot;I like to collect rock albums&quot;,</span><br><span class="line">    &quot;interests&quot;:  [ &quot;music&quot; ]</span><br><span class="line">&#125;</span><br><span class="line">&#125;]&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>全文搜索</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET &quot;10.96.83.188:9200/megacorp/employee/_search&quot; -H &apos;Content-Type: application/json&apos; -d&apos;</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot; : &#123;</span><br><span class="line">        &quot;match&quot; : &#123;</span><br><span class="line">            &quot;about&quot; : &quot;rock climbing&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&apos;</span><br><span class="line">&#123;&quot;took&quot;:8,&quot;timed_out&quot;:false,&quot;_shards&quot;:&#123;&quot;total&quot;:5,&quot;successful&quot;:5,&quot;failed&quot;:0&#125;,&quot;hits&quot;:&#123;&quot;total&quot;:2,&quot;max_score&quot;:0.53484553,&quot;hits&quot;:[&#123;&quot;_index&quot;:&quot;megacorp&quot;,&quot;_type&quot;:&quot;employee&quot;,&quot;_id&quot;:&quot;1&quot;,&quot;_score&quot;:0.53484553,&quot;_source&quot;:</span><br><span class="line">&#123;</span><br><span class="line">    &quot;first_name&quot; : &quot;John&quot;,</span><br><span class="line">    &quot;last_name&quot; :  &quot;Smith&quot;,</span><br><span class="line">    &quot;age&quot; :        25,</span><br><span class="line">    &quot;about&quot; :      &quot;I love to go rock climbing&quot;,</span><br><span class="line">    &quot;interests&quot;: [ &quot;sports&quot;, &quot;music&quot; ]</span><br><span class="line">&#125;</span><br><span class="line">&#125;,&#123;&quot;_index&quot;:&quot;megacorp&quot;,&quot;_type&quot;:&quot;employee&quot;,&quot;_id&quot;:&quot;2&quot;,&quot;_score&quot;:0.26742277,&quot;_source&quot;:</span><br><span class="line">&#123;</span><br><span class="line">    &quot;first_name&quot; :  &quot;Jane&quot;,</span><br><span class="line">    &quot;last_name&quot; :   &quot;Smith&quot;,</span><br><span class="line">    &quot;age&quot; :         32,</span><br><span class="line">    &quot;about&quot; :       &quot;I like to collect rock albums&quot;,</span><br><span class="line">    &quot;interests&quot;:  [ &quot;music&quot; ]</span><br><span class="line">&#125;</span><br><span class="line">&#125;]&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>Elasticsearch 默认按照相关性得分排序，即每个文档跟查询的匹配程度。<br>第一个最高得分的结果很明显：John Smith 的 about 属性清楚地写着 “rock climbing”<br>Jane Smith也作为结果返回，原因是她的 about 属性里提到了 “rock” 。因为只有 “rock” 而没有 “climbing” ，所以她的相关性得分低于 John 的。</p>
+<p>这是完全区别于传统关系型数据库的一个概念，数据库中的一条记录要么匹配要么不匹配。</p>
+<p><strong>短语搜索</strong></p>
+<p>想要精确匹配一系列单词或者短语。<br>匹配同时包含 “rock” 和 “climbing” ，并且 二者以短语 “rock climbing” 的形式紧挨着的雇员记录。<br>为此对 match 查询稍作调整，使用一个叫做 match_phrase 的查询</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"> curl -X GET &quot;10.96.83.188:9200/megacorp/employee/_search&quot; -H &apos;Content-Type: application/json&apos; -d&apos;</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot; : &#123;</span><br><span class="line">        &quot;match_phrase&quot; : &#123;</span><br><span class="line">            &quot;about&quot; : &quot;rock climbing&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&apos;</span><br><span class="line">&#123;&quot;took&quot;:13,&quot;timed_out&quot;:false,&quot;_shards&quot;:&#123;&quot;total&quot;:5,&quot;successful&quot;:5,&quot;failed&quot;:0&#125;,&quot;hits&quot;:&#123;&quot;total&quot;:1,&quot;max_score&quot;:0.53484553,&quot;hits&quot;:[&#123;&quot;_index&quot;:&quot;megacorp&quot;,&quot;_type&quot;:&quot;employee&quot;,&quot;_id&quot;:&quot;1&quot;,&quot;_score&quot;:0.53484553,&quot;_source&quot;:</span><br><span class="line">&#123;</span><br><span class="line">    &quot;first_name&quot; : &quot;John&quot;,</span><br><span class="line">    &quot;last_name&quot; :  &quot;Smith&quot;,</span><br><span class="line">    &quot;age&quot; :        25,</span><br><span class="line">    &quot;about&quot; :      &quot;I love to go rock climbing&quot;,</span><br><span class="line">    &quot;interests&quot;: [ &quot;sports&quot;, &quot;music&quot; ]</span><br><span class="line">&#125;</span><br><span class="line">&#125;]&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>高亮搜索</strong></p>
+<p>返回结果与之前一样，与此同时结果中还多了一个叫做 highlight 的部分。这个部分包含了 about 属性匹配的文本片段，并以 HTML 标签 <em></em> 封装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET &quot;10.96.83.188:9200/megacorp/employee/_search&quot; -H &apos;Content-Type: application/json&apos; -d&apos;</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot; : &#123;</span><br><span class="line">        &quot;match_phrase&quot; : &#123;</span><br><span class="line">            &quot;about&quot; : &quot;rock climbing&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;highlight&quot;: &#123;</span><br><span class="line">        &quot;fields&quot; : &#123;</span><br><span class="line">            &quot;about&quot; : &#123;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&apos;</span><br><span class="line">&#123;&quot;took&quot;:36,&quot;timed_out&quot;:false,&quot;_shards&quot;:&#123;&quot;total&quot;:5,&quot;successful&quot;:5,&quot;failed&quot;:0&#125;,&quot;hits&quot;:&#123;&quot;total&quot;:1,&quot;max_score&quot;:0.53484553,&quot;hits&quot;:[&#123;&quot;_index&quot;:&quot;megacorp&quot;,&quot;_type&quot;:&quot;employee&quot;,&quot;_id&quot;:&quot;1&quot;,&quot;_score&quot;:0.53484553,&quot;_source&quot;:</span><br><span class="line">&#123;</span><br><span class="line">    &quot;first_name&quot; : &quot;John&quot;,</span><br><span class="line">    &quot;last_name&quot; :  &quot;Smith&quot;,</span><br><span class="line">    &quot;age&quot; :        25,</span><br><span class="line">    &quot;about&quot; :      &quot;I love to go rock climbing&quot;,</span><br><span class="line">    &quot;interests&quot;: [ &quot;sports&quot;, &quot;music&quot; ]</span><br><span class="line">&#125;</span><br><span class="line">,&quot;highlight&quot;:&#123;&quot;about&quot;:[&quot;I love to go &lt;em&gt;rock&lt;/em&gt; &lt;em&gt;climbing&lt;/em&gt;&quot;]&#125;&#125;]&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>分析</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET &quot;10.96.83.188:9200/megacorp/employee/_search&quot; -H &apos;Content-Type: application/json&apos; -d&apos;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;aggs&quot;: &#123;</span><br><span class="line">    &quot;all_interests&quot;: &#123;</span><br><span class="line">      &quot;terms&quot;: &#123; &quot;field&quot;: &quot;interests&quot; &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">&apos;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">   ...</span><br><span class="line">   &quot;hits&quot;: &#123; ... &#125;,</span><br><span class="line">   &quot;aggregations&quot;: &#123;</span><br><span class="line">      &quot;all_interests&quot;: &#123;</span><br><span class="line">         &quot;buckets&quot;: [</span><br><span class="line">            &#123;</span><br><span class="line">               &quot;key&quot;:       &quot;music&quot;,</span><br><span class="line">               &quot;doc_count&quot;: 2</span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">               &quot;key&quot;:       &quot;forestry&quot;,</span><br><span class="line">               &quot;doc_count&quot;: 1</span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">               &quot;key&quot;:       &quot;sports&quot;,</span><br><span class="line">               &quot;doc_count&quot;: 1</span><br><span class="line">            &#125;</span><br><span class="line">         ]</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
           
-          <!--/noindex-->
         
       
     </div>
@@ -2110,6 +1201,12 @@
     
 
     
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -2146,7 +1243,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/02/25/每日一面/服务端面试补充/">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/11/计算广告/广告名词解释-Ad_Network/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Craze lee">
@@ -2166,7 +1263,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2019/02/25/每日一面/服务端面试补充/" class="post-title-link" itemprop="url">服务端面试题集（补充）</a>
+                <a href="/2019/04/11/计算广告/广告名词解释-Ad_Network/" class="post-title-link" itemprop="url">广告名词解释-Ad Network</a>
               
             
           </h1>
@@ -2191,7 +1288,7 @@
                 
               
 
-              <time title="创建时间：2019-02-25 11:54:08 / 修改时间：19:41:06" itemprop="dateCreated datePublished" datetime="2019-02-25T11:54:08+08:00">2019-02-25</time>
+              <time title="创建时间：2019-04-11 10:00:00 / 修改时间：11:55:12" itemprop="dateCreated datePublished" datetime="2019-04-11T10:00:00+08:00">2019-04-11</time>
             
 
             
@@ -2213,7 +1310,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/每日一面/" itemprop="url" rel="index"><span itemprop="name">每日一面</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算广告/" itemprop="url" rel="index"><span itemprop="name">计算广告</span></a></span>
 
                 
                 
@@ -2232,8 +1329,8 @@
                 </span>
             
                 <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/02/25/每日一面/服务端面试补充/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/02/25/每日一面/服务端面试补充/" itemprop="commentCount"></span>
+                <a href="/2019/04/11/计算广告/广告名词解释-Ad_Network/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/11/计算广告/广告名词解释-Ad_Network/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -2262,34 +1359,16 @@
 
       
         
+          <h2 id="Ad-Network-广告网络平台"><a href="#Ad-Network-广告网络平台" class="headerlink" title="Ad Network 广告网络平台"></a>Ad Network 广告网络平台</h2><p><img src="/images/15549529556857.jpg" alt></p>
+          <!--noindex-->
           
-            <h2 id="来源声明"><a href="#来源声明" class="headerlink" title="来源声明"></a>来源声明</h2><p>来源网络</p>
-<h2 id="补充上篇"><a href="#补充上篇" class="headerlink" title="补充上篇"></a>补充上篇</h2><ol>
-<li><p>mysql事务隔离级别，脏读</p>
-</li>
-<li><p>mysql索引</p>
-</li>
-<li><p>B+数</p>
-</li>
-<li><p>kafka怎么避免重复消费</p>
-</li>
-<li><p>kafka怎么保证顺序消费</p>
-</li>
-<li><p>kafka分区有什么用</p>
-</li>
-<li><p>消费者宕机了，怎么确认有没收到消息</p>
-</li>
-<li><p>消费者group订阅了一个topic，当topic接收到消息时，消费者group上的所有消费者能接收到消息吗</p>
-</li>
-<li><p>thrift协议与http协议的区别</p>
-</li>
-<li><p>golang垃圾回收算法、PHP垃圾回收算法</p>
-</li>
-<li><p>rpc与http和thrift关系</p>
-</li>
-</ol>
-
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/04/11/计算广告/广告名词解释-Ad_Network/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
           
+          <!--/noindex-->
         
       
     </div>
@@ -2312,6 +1391,1022 @@
     
 
     
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/10/计算广告/广告名词解释-Ad_Exchange/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Craze lee">
+      <meta itemprop="description" content="做个有温度的人">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="念念不忘 必有回响">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/04/10/计算广告/广告名词解释-Ad_Exchange/" class="post-title-link" itemprop="url">广告名词解释-Ad Exchange</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-10 18:00:08" itemprop="dateCreated datePublished" datetime="2019-04-10T18:00:08+08:00">2019-04-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-11 11:54:58" itemprop="dateModified" datetime="2019-04-11T11:54:58+08:00">2019-04-11</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算广告/" itemprop="url" rel="index"><span itemprop="name">计算广告</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2019/04/10/计算广告/广告名词解释-Ad_Exchange/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/10/计算广告/广告名词解释-Ad_Exchange/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="Ad-Exchange-广告交易平台"><a href="#Ad-Exchange-广告交易平台" class="headerlink" title="Ad Exchange (广告交易平台)"></a>Ad Exchange (广告交易平台)</h2><p><img src="/images/15548848497290.jpg" alt></p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/04/10/计算广告/广告名词解释-Ad_Exchange/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    <div>
+      
+    </div>
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/10/计算广告/广告名词解释-DMP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Craze lee">
+      <meta itemprop="description" content="做个有温度的人">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="念念不忘 必有回响">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/04/10/计算广告/广告名词解释-DMP/" class="post-title-link" itemprop="url">广告名词解释-DMP</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-10 17:30:08" itemprop="dateCreated datePublished" datetime="2019-04-10T17:30:08+08:00">2019-04-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-11 11:56:50" itemprop="dateModified" datetime="2019-04-11T11:56:50+08:00">2019-04-11</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算广告/" itemprop="url" rel="index"><span itemprop="name">计算广告</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2019/04/10/计算广告/广告名词解释-DMP/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/10/计算广告/广告名词解释-DMP/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="DMP（Data-Management-Platform，数据管理平台）"><a href="#DMP（Data-Management-Platform，数据管理平台）" class="headerlink" title="DMP（Data-Management Platform，数据管理平台）"></a>DMP（Data-Management Platform，数据管理平台）</h2><p><img src="/images/15548869951068.jpg" alt></p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/04/10/计算广告/广告名词解释-DMP/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    <div>
+      
+    </div>
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/10/计算广告/广告名词解释-SSP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Craze lee">
+      <meta itemprop="description" content="做个有温度的人">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="念念不忘 必有回响">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/04/10/计算广告/广告名词解释-SSP/" class="post-title-link" itemprop="url">广告名词解释-SSP</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-10 17:00:08" itemprop="dateCreated datePublished" datetime="2019-04-10T17:00:08+08:00">2019-04-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-11 11:54:54" itemprop="dateModified" datetime="2019-04-11T11:54:54+08:00">2019-04-11</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算广告/" itemprop="url" rel="index"><span itemprop="name">计算广告</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2019/04/10/计算广告/广告名词解释-SSP/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/10/计算广告/广告名词解释-SSP/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="SSP（Sell-Supply-Side-Platform）供应方平台"><a href="#SSP（Sell-Supply-Side-Platform）供应方平台" class="headerlink" title="SSP（Sell/Supply-Side Platform）供应方平台"></a>SSP（Sell/Supply-Side Platform）供应方平台</h2><p><img src="/images/15548837284764.jpg" alt></p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/04/10/计算广告/广告名词解释-SSP/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    <div>
+      
+    </div>
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/10/计算广告/广告名词解释-DSP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Craze lee">
+      <meta itemprop="description" content="做个有温度的人">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="念念不忘 必有回响">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/04/10/计算广告/广告名词解释-DSP/" class="post-title-link" itemprop="url">广告名词解释-DSP</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-10 16:00:08" itemprop="dateCreated datePublished" datetime="2019-04-10T16:00:08+08:00">2019-04-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-11 11:54:50" itemprop="dateModified" datetime="2019-04-11T11:54:50+08:00">2019-04-11</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算广告/" itemprop="url" rel="index"><span itemprop="name">计算广告</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2019/04/10/计算广告/广告名词解释-DSP/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/10/计算广告/广告名词解释-DSP/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="DSP（Demand-Side-Platform）需求方平台"><a href="#DSP（Demand-Side-Platform）需求方平台" class="headerlink" title="DSP（Demand-Side Platform）需求方平台"></a>DSP（Demand-Side Platform）需求方平台</h2><p><img src="/images/15548816084888.jpg" alt></p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/04/10/计算广告/广告名词解释-DSP/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    <div>
+      
+    </div>
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/10/计算广告/广告名词解释-RTB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Craze lee">
+      <meta itemprop="description" content="做个有温度的人">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="念念不忘 必有回响">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/04/10/计算广告/广告名词解释-RTB/" class="post-title-link" itemprop="url">广告名词解释-RTB</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-10 15:00:08" itemprop="dateCreated datePublished" datetime="2019-04-10T15:00:08+08:00">2019-04-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-11 11:54:48" itemprop="dateModified" datetime="2019-04-11T11:54:48+08:00">2019-04-11</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算广告/" itemprop="url" rel="index"><span itemprop="name">计算广告</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2019/04/10/计算广告/广告名词解释-RTB/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/10/计算广告/广告名词解释-RTB/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="RTB（Real-Time-Bidding）实时竞价"><a href="#RTB（Real-Time-Bidding）实时竞价" class="headerlink" title="RTB（Real Time Bidding）实时竞价"></a>RTB（Real Time Bidding）实时竞价</h2><p><img src="/images/15548791103500.jpg" alt></p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/04/10/计算广告/广告名词解释-RTB/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    <div>
+      
+    </div>
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -2337,7 +2432,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2382,7 +2477,7 @@
                 
                   <a href="/archives">
                 
-                    <span class="site-state-item-count">22</span>
+                    <span class="site-state-item-count">35</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2419,7 +2514,13 @@
                     
                       
                     
-                    <span class="site-state-item-count">12</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">15</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -2458,7 +2559,13 @@
                     
                       
                     
-                    <span class="site-state-item-count">13</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>

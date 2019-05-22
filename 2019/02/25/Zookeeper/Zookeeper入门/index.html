@@ -96,13 +96,13 @@
 
 
 
-  <meta name="description" content="Zookeeper文件系统 + 通知机制 特点 一个领导者(Leader)，多个跟随者(Follower)组成的集群 集群中只要有半数以上节点存活，Zookeeper集群就能正常服务 全局数据一致性，每个server保存一份相同的副本，client无论链接哪个server，得到的数据都是一致的 更新请求顺序执行，来自同一个client的请求按顺序执行 数据更新原子性，一次数据更新要么成功要么失败">
-<meta name="keywords" content="Zookeeper,分布式">
+  <meta name="description" content="一、什么是ZookeeperZooKeeper是一个为分布式应用提供一致性服务的软件，提供的功能包括：配置维护、域名服务、分布式同步、组服务等。 它的核心是：文件系统 + 通知机制 二、重要特点 一个领导者(Leader)，多个跟随者(Follower)组成的集群 集群中只要有半数以上节点存活，Zookeeper集群就能正常服务 全局数据一致性，每个server保存一份相同的副本，client无论">
+<meta name="keywords" content="分布式,Zookeeper">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Zookeeper 入门介绍">
 <meta property="og:url" content="http://craze-lee.github.io/2019/02/25/Zookeeper/Zookeeper入门/index.html">
 <meta property="og:site_name" content="念念不忘 必有回响">
-<meta property="og:description" content="Zookeeper文件系统 + 通知机制 特点 一个领导者(Leader)，多个跟随者(Follower)组成的集群 集群中只要有半数以上节点存活，Zookeeper集群就能正常服务 全局数据一致性，每个server保存一份相同的副本，client无论链接哪个server，得到的数据都是一致的 更新请求顺序执行，来自同一个client的请求按顺序执行 数据更新原子性，一次数据更新要么成功要么失败">
+<meta property="og:description" content="一、什么是ZookeeperZooKeeper是一个为分布式应用提供一致性服务的软件，提供的功能包括：配置维护、域名服务、分布式同步、组服务等。 它的核心是：文件系统 + 通知机制 二、重要特点 一个领导者(Leader)，多个跟随者(Follower)组成的集群 集群中只要有半数以上节点存活，Zookeeper集群就能正常服务 全局数据一致性，每个server保存一份相同的副本，client无论">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://craze-lee.github.io/images/15510641008952.jpg">
 <meta property="og:image" content="http://craze-lee.github.io/images/15510645270163.jpg">
@@ -111,10 +111,10 @@
 <meta property="og:image" content="http://craze-lee.github.io/images/15510821471380.jpg">
 <meta property="og:image" content="http://craze-lee.github.io/images/15510821616617.jpg">
 <meta property="og:image" content="http://craze-lee.github.io/images/15510831646797.jpg">
-<meta property="og:updated_time" content="2019-02-27T08:11:09.551Z">
+<meta property="og:updated_time" content="2019-05-15T09:37:20.383Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Zookeeper 入门介绍">
-<meta name="twitter:description" content="Zookeeper文件系统 + 通知机制 特点 一个领导者(Leader)，多个跟随者(Follower)组成的集群 集群中只要有半数以上节点存活，Zookeeper集群就能正常服务 全局数据一致性，每个server保存一份相同的副本，client无论链接哪个server，得到的数据都是一致的 更新请求顺序执行，来自同一个client的请求按顺序执行 数据更新原子性，一次数据更新要么成功要么失败">
+<meta name="twitter:description" content="一、什么是ZookeeperZooKeeper是一个为分布式应用提供一致性服务的软件，提供的功能包括：配置维护、域名服务、分布式同步、组服务等。 它的核心是：文件系统 + 通知机制 二、重要特点 一个领导者(Leader)，多个跟随者(Follower)组成的集群 集群中只要有半数以上节点存活，Zookeeper集群就能正常服务 全局数据一致性，每个server保存一份相同的副本，client无论">
 <meta name="twitter:image" content="http://craze-lee.github.io/images/15510641008952.jpg">
 
 
@@ -441,7 +441,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-02-27 16:11:09" itemprop="dateModified" datetime="2019-02-27T16:11:09+08:00">2019-02-27</time>
+                <time title="修改时间：2019-05-15 17:37:20" itemprop="dateModified" datetime="2019-05-15T17:37:20+08:00">2019-05-15</time>
               
             
           </span>
@@ -513,8 +513,9 @@
       
 
       
-        <h2 id="Zookeeper"><a href="#Zookeeper" class="headerlink" title="Zookeeper"></a>Zookeeper</h2><p>文件系统 + 通知机制</p>
-<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ol>
+        <h2 id="一、什么是Zookeeper"><a href="#一、什么是Zookeeper" class="headerlink" title="一、什么是Zookeeper"></a>一、什么是Zookeeper</h2><p>ZooKeeper是一个为分布式应用提供一致性服务的软件，提供的功能包括：配置维护、域名服务、分布式同步、组服务等。</p>
+<p>它的核心是：文件系统 + 通知机制</p>
+<h2 id="二、重要特点"><a href="#二、重要特点" class="headerlink" title="二、重要特点"></a>二、重要特点</h2><ol>
 <li>一个领导者(Leader)，多个跟随者(Follower)组成的集群</li>
 <li>集群中<strong>只要有半数以上节点存活</strong>，Zookeeper集群就能正常服务</li>
 <li>全局数据一致性，每个server保存一份相同的副本，client无论链接哪个server，得到的数据都是一致的</li>
@@ -524,9 +525,9 @@
 </ol>
 <p><img src="/images/15510641008952.jpg" alt></p>
 <a id="more"></a>
-<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>Zookeeper数据模型的结构与<strong>Unix文件系统很类似</strong>，整体上可看作是<strong>一棵树</strong>，每个节点称作一个ZNode。每个ZNode默认能存储<strong>1MB数据</strong>，每个ZNode都可以通过其<strong>路径唯一标识</strong>。</p>
+<h2 id="三、数据结构"><a href="#三、数据结构" class="headerlink" title="三、数据结构"></a>三、数据结构</h2><p>Zookeeper数据模型的结构与<strong>Unix文件系统很类似</strong>，整体上可看作是<strong>一棵树</strong>，每个节点称作一个ZNode。每个ZNode默认能存储<strong>1MB数据</strong>，每个ZNode都可以通过其<strong>路径唯一标识</strong>。</p>
 <p><img src="/images/15510645270163.jpg" alt></p>
-<h2 id="应用场景-※"><a href="#应用场景-※" class="headerlink" title="应用场景(※)"></a>应用场景(※)</h2><ol>
+<h2 id="四、应用场景-※"><a href="#四、应用场景-※" class="headerlink" title="四、应用场景(※)"></a>四、应用场景(※)</h2><ol>
 <li>分布式锁</li>
 <li>服务注册和发现<ul>
 <li>利用Znode和Watcher，可以实现分布式服务的注册和发现。最著名的应用就是阿里的分布式RPC框架Dubbo。</li>
@@ -537,8 +538,8 @@
 </ul>
 </li>
 </ol>
-<h2 id="选举机制-※"><a href="#选举机制-※" class="headerlink" title="选举机制(※)"></a>选举机制(※)</h2><h3 id="半数机制（paxos协议）"><a href="#半数机制（paxos协议）" class="headerlink" title="半数机制（paxos协议）"></a>半数机制（paxos协议）</h3><p>集群中半数以上机器存活，集群可用，所以Zookeeper适合安装奇数台服务器</p>
-<h3 id="内部选举"><a href="#内部选举" class="headerlink" title="内部选举"></a>内部选举</h3><p>在分布式系统中选主最直接的方法是直接选定集群的一个节点为leader，其它的节点为follower，这样引入的一个问题是如果leader节点挂掉，整个集群就挂掉了。需要有一种算法自动选主，如果leader节点挂掉，则从follower节点中选出一个主节点。</p>
+<h2 id="五、选举机制-※"><a href="#五、选举机制-※" class="headerlink" title="五、选举机制(※)"></a>五、选举机制(※)</h2><h3 id="5-1-半数机制（paxos协议）"><a href="#5-1-半数机制（paxos协议）" class="headerlink" title="5.1 半数机制（paxos协议）"></a>5.1 半数机制（paxos协议）</h3><p>集群中半数以上机器存活，集群可用，所以Zookeeper适合安装奇数台服务器</p>
+<h3 id="5-2-内部选举"><a href="#5-2-内部选举" class="headerlink" title="5.2 内部选举"></a>5.2 内部选举</h3><p>在分布式系统中选主最直接的方法是直接选定集群的一个节点为leader，其它的节点为follower，这样引入的一个问题是如果leader节点挂掉，整个集群就挂掉了。需要有一种算法自动选主，如果leader节点挂掉，则从follower节点中选出一个主节点。</p>
 <p><strong>1. 选举阶段 Leader election</strong></p>
 <p>最大ZXID也就是节点本地的最新事务编号，包含epoch和计数两部分。epoch是纪元的意思，相当于Raft算法选主时候的term，标识当前leader周期，每次选举一个新的Leader服务器后，会生成一个新的epoch</p>
 <ul>
@@ -554,13 +555,16 @@
 </ul>
 <p><strong>3. 同步阶段 Synchronization</strong></p>
 <p>Leader刚才收集得到的最新历史事务日志，同步给集群中所有的Follower。只有当<strong>半数Follower同步成功</strong>，这个准Leader<strong>才能成为正式的Leader</strong>。</p>
-<h2 id="节点类型"><a href="#节点类型" class="headerlink" title="节点类型"></a>节点类型</h2><p>持久persistent：client 和 server 断开连接后，创建的节点不删除<br>短暂ephemeral：client 和 server 断开连接后，创建的节点自己删除</p>
-<p>另外分 有序号，无序号。创建有序节点时，会自动将节点名增加序列号</p>
+<h2 id="六、ZNode-内构"><a href="#六、ZNode-内构" class="headerlink" title="六、ZNode 内构"></a>六、ZNode 内构</h2><h3 id="6-1-节点类型"><a href="#6-1-节点类型" class="headerlink" title="6.1 节点类型"></a>6.1 节点类型</h3><p>持久persistent：client 和 server 断开连接后，创建的节点不删除</p>
+<p>短暂ephemeral：client 和 server 断开连接后，创建的节点自己删除</p>
+<p>另外分 有序和无序。创建有序节点时，会自动将节点名增加序列号</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ create -s /test/no1 &quot;no1&quot;</span><br><span class="line">Created /test/no10000000000</span><br></pre></td></tr></table></figure>
-<p><img src="/images/15510811520116.jpg" alt></p>
-<p>data: ZNode存储的数据信息，每个节点数据最大不超过1MB<br>ACL(Access Control List): 记录访问权限，哪些人或哪些IP可访问本节点<br>stat: 各种元数据，比如事务ID、版本号、时间戳、大小等<br>child: 当前节点的子节点</p>
-<p><strong>stat</strong></p>
+<h3 id="6-2-内部结构"><a href="#6-2-内部结构" class="headerlink" title="6.2 内部结构"></a>6.2 内部结构</h3><p><img src="/images/15510811520116.jpg" alt></p>
 <ul>
+<li>data: ZNode存储的数据信息，每个节点数据最大不超过1MB</li>
+<li>ACL(Access Control List): 记录访问权限，哪些人或哪些IP可访问本节点</li>
+<li>child: 当前节点的子节点</li>
+<li>stat: 各种元数据，比如事务ID、版本号、时间戳、大小等<ul>
 <li>czxid- 引起这个 znode 创建的 zxid，创建节点的事务的 zxid</li>
 <li>ctime - znode 被创建的毫秒数</li>
 <li>mzxid - znode 最后更新的 zxid</li>
@@ -568,11 +572,13 @@
 <li>pZxid-znode 最后更新的子节点 zxid</li>
 <li>cversion - znode 子节点变化号，znode 子节点修改次数 7)dataversion - znode 数据变化号</li>
 <li>aclVersion - znode 访问控制列表的变化号</li>
-<li>ephemeralOwner- 如果是临时节点，这个是znode拥有者的 session id。如果不是临时节点则是 0。</li>
+<li>ephemeralOwner- 如果是临时节点，这个是znode拥有者的 session id。如果不是临时节点则是 0</li>
 <li>dataLength- znode 的数据长度</li>
 <li>numChildren - znode 子节点数量</li>
 </ul>
-<h2 id="监听器原理-※"><a href="#监听器原理-※" class="headerlink" title="监听器原理(※)"></a>监听器原理(※)</h2><table>
+</li>
+</ul>
+<h2 id="七、监听器原理-※"><a href="#七、监听器原理-※" class="headerlink" title="七、监听器原理(※)"></a>七、监听器原理(※)</h2><table>
 <thead>
 <tr>
 <th>客户端</th>
@@ -606,12 +612,12 @@
 </tbody>
 </table>
 <p><img src="/images/15510827433474.jpg" alt></p>
-<h4 id="常见监听"><a href="#常见监听" class="headerlink" title="常见监听"></a>常见监听</h4><ol>
+<h4 id="八、常见监听"><a href="#八、常见监听" class="headerlink" title="八、常见监听"></a>八、常见监听</h4><ol>
 <li>子节点增减变化（如下示例）</li>
 <li>节点数据变化</li>
 </ol>
 <p><img src="/images/15510821471380.jpg" alt><br><img src="/images/15510821616617.jpg" alt></p>
-<h2 id="写数据流程"><a href="#写数据流程" class="headerlink" title="写数据流程"></a>写数据流程</h2><ol>
+<h2 id="九、写数据流程"><a href="#九、写数据流程" class="headerlink" title="九、写数据流程"></a>九、写数据流程</h2><ol>
 <li>客户端发出写入数据请求给任意Follower。</li>
 <li>Follower把写入数据请求转发给Leader。</li>
 <li>Leader采用二阶段提交方式，先发送Propose广播给Follower。</li>
@@ -619,7 +625,7 @@
 <li>Leader接到半数以上ACK消息，返回成功给客户端，并且广播Commit请求给Follower</li>
 </ol>
 <p><img src="/images/15510831646797.jpg" alt></p>
-<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><p>客户端连接</p>
+<h2 id="十、命令"><a href="#十、命令" class="headerlink" title="十、命令"></a>十、命令</h2><p>客户端连接</p>
 <p>zkcli -server host:port</p>
 <p><strong>create [-s] [-e] path data acl</strong></p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ create /test <span class="string">"data"</span></span><br><span class="line">Created /test</span><br></pre></td></tr></table></figure>
@@ -681,13 +687,21 @@
 
     
 
+    <! -- 添加微信图标 -->
+    <div>
+      
+        <img src="/images/public.png" title="微信公众号" height="120px" width="60%">
+      
+    </div>
+
+
     <footer class="post-footer">
       
         <div class="post-tags">
           
-            <a href="/tags/Zookeeper/" rel="tag"><i class="fa fa-tag"></i> Zookeeper</a>
-          
             <a href="/tags/分布式/" rel="tag"><i class="fa fa-tag"></i> 分布式</a>
+          
+            <a href="/tags/Zookeeper/" rel="tag"><i class="fa fa-tag"></i> Zookeeper</a>
           
         </div>
       
@@ -788,7 +802,7 @@
                 
                   <a href="/archives">
                 
-                    <span class="site-state-item-count">22</span>
+                    <span class="site-state-item-count">35</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -825,7 +839,13 @@
                     
                       
                     
-                    <span class="site-state-item-count">12</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">15</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -864,7 +884,13 @@
                     
                       
                     
-                    <span class="site-state-item-count">13</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -933,7 +959,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Zookeeper"><span class="nav-number">1.</span> <span class="nav-text">Zookeeper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特点"><span class="nav-number">2.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据结构"><span class="nav-number">3.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用场景-※"><span class="nav-number">4.</span> <span class="nav-text">应用场景(※)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选举机制-※"><span class="nav-number">5.</span> <span class="nav-text">选举机制(※)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#半数机制（paxos协议）"><span class="nav-number">5.1.</span> <span class="nav-text">半数机制（paxos协议）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内部选举"><span class="nav-number">5.2.</span> <span class="nav-text">内部选举</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#节点类型"><span class="nav-number">6.</span> <span class="nav-text">节点类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#监听器原理-※"><span class="nav-number">7.</span> <span class="nav-text">监听器原理(※)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常见监听"><span class="nav-number">7.0.1.</span> <span class="nav-text">常见监听</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#写数据流程"><span class="nav-number">8.</span> <span class="nav-text">写数据流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令"><span class="nav-number">9.</span> <span class="nav-text">命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">9.1.</span> <span class="nav-text">参考</span></a></li></ol></li></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、什么是Zookeeper"><span class="nav-number">1.</span> <span class="nav-text">一、什么是Zookeeper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、重要特点"><span class="nav-number">2.</span> <span class="nav-text">二、重要特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、数据结构"><span class="nav-number">3.</span> <span class="nav-text">三、数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、应用场景-※"><span class="nav-number">4.</span> <span class="nav-text">四、应用场景(※)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、选举机制-※"><span class="nav-number">5.</span> <span class="nav-text">五、选举机制(※)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-半数机制（paxos协议）"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 半数机制（paxos协议）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-内部选举"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 内部选举</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六、ZNode-内构"><span class="nav-number">6.</span> <span class="nav-text">六、ZNode 内构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-节点类型"><span class="nav-number">6.1.</span> <span class="nav-text">6.1 节点类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-内部结构"><span class="nav-number">6.2.</span> <span class="nav-text">6.2 内部结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#七、监听器原理-※"><span class="nav-number">7.</span> <span class="nav-text">七、监听器原理(※)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#八、常见监听"><span class="nav-number">7.0.1.</span> <span class="nav-text">八、常见监听</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#九、写数据流程"><span class="nav-number">8.</span> <span class="nav-text">九、写数据流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#十、命令"><span class="nav-number">9.</span> <span class="nav-text">十、命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">9.1.</span> <span class="nav-text">参考</span></a></li></ol></li></div>
             
 
           </div>

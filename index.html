@@ -373,7 +373,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/11/计算广告/广告名词解释-Ad_Network/">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/05/21/Golang/进阶/定时器/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Craze lee">
@@ -393,7 +393,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2019/04/11/计算广告/广告名词解释-Ad_Network/" class="post-title-link" itemprop="url">广告名词解释-Ad Network</a>
+                <a href="/2019/05/21/Golang/进阶/定时器/" class="post-title-link" itemprop="url">【Golang进阶】定时器</a>
               
             
           </h1>
@@ -418,7 +418,7 @@
                 
               
 
-              <time title="创建时间：2019-04-11 10:00:00 / 修改时间：11:55:12" itemprop="dateCreated datePublished" datetime="2019-04-11T10:00:00+08:00">2019-04-11</time>
+              <time title="创建时间：2019-05-21 14:19:08 / 修改时间：15:03:18" itemprop="dateCreated datePublished" datetime="2019-05-21T14:19:08+08:00">2019-05-21</time>
             
 
             
@@ -440,7 +440,14 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算广告/" itemprop="url" rel="index"><span itemprop="name">计算广告</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Golang/进阶/" itemprop="url" rel="index"><span itemprop="name">进阶</span></a></span>
 
                 
                 
@@ -459,8 +466,8 @@
                 </span>
             
                 <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/04/11/计算广告/广告名词解释-Ad_Network/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/11/计算广告/广告名词解释-Ad_Network/" itemprop="commentCount"></span>
+                <a href="/2019/05/21/Golang/进阶/定时器/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/05/21/Golang/进阶/定时器/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -489,16 +496,19 @@
 
       
         
-          <h2 id="Ad-Network-广告网络平台"><a href="#Ad-Network-广告网络平台" class="headerlink" title="Ad Network 广告网络平台"></a>Ad Network 广告网络平台</h2><p><img src="/images/15549529556857.jpg" alt></p>
-          <!--noindex-->
           
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/04/11/计算广告/广告名词解释-Ad_Network/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
+            <h2 id="Ticker"><a href="#Ticker" class="headerlink" title="Ticker"></a>Ticker</h2><h3 id="1-用时间阻塞主程序，从而控制ticker"><a href="#1-用时间阻塞主程序，从而控制ticker" class="headerlink" title="1. 用时间阻塞主程序，从而控制ticker"></a>1. 用时间阻塞主程序，从而控制ticker</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>  &#123;</span><br><span class="line">   <span class="comment">// 初始化ticker，每秒执行一次</span></span><br><span class="line">	<span class="keyword">var</span> ticker = time.NewTicker(<span class="number">1</span> * time.Second)</span><br><span class="line">    </span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> t := <span class="keyword">range</span> ticker.C &#123;</span><br><span class="line">			fmt.Println(<span class="string">"tick at"</span>, t)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line">   <span class="comment">// 阻塞主程序防退出</span></span><br><span class="line">	time.Sleep(time.Second * <span class="number">5</span>)</span><br><span class="line">	<span class="comment">// 主动终止</span></span><br><span class="line">	ticker.Stop()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果</p>
+<blockquote>
+<p>ticker1 at 2019-05-21 14:57:56.562591 +0800 CST m=+1.005065934<br>ticker1 at 2019-05-21 14:57:57.562549 +0800 CST m=+2.005016651<br>ticker1 at 2019-05-21 14:57:58.558122 +0800 CST m=+3.000583914<br>ticker1 at 2019-05-21 14:57:59.563205 +0800 CST m=+4.005660201<br>ticker1 at 2019-05-21 14:58:00.562585 +0800 CST m=+5.005033303</p>
+</blockquote>
+<h3 id="2-用channel来精准控制次数"><a href="#2-用channel来精准控制次数" class="headerlink" title="2. 用channel来精准控制次数"></a>2. 用channel来精准控制次数</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	<span class="keyword">var</span> ticker2 = time.NewTicker(<span class="number">100</span> * time.Millisecond)</span><br><span class="line">  </span><br><span class="line">	<span class="comment">// 创建buffer为2的channel</span></span><br><span class="line">	c := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">2</span>)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> t := <span class="keyword">range</span> ticker2.C&#123;</span><br><span class="line">			<span class="comment">// 往channel写数据，写满buffer后终止程序</span></span><br><span class="line">			c &lt;- <span class="number">1</span></span><br><span class="line">			fmt.Println(<span class="string">"ticker2 at "</span>, t)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	time.Sleep(time.Second * <span class="number">500</span>)</span><br><span class="line">	fmt.Println(<span class="string">"ticker stopped"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果</p>
+<blockquote>
+<p>ticker2 at  2019-05-21 14:57:55.65885 +0800 CST m=+0.101330668<br>ticker2 at  2019-05-21 14:57:55.758399 +0800 CST m=+0.200878747</p>
+</blockquote>
+
           
-          <!--/noindex-->
         
       
     </div>
@@ -521,6 +531,12 @@
     
 
     
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -557,7 +573,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/10/计算广告/广告名词解释-Ad_Exchange/">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/05/20/Golang/进阶/读写文件/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Craze lee">
@@ -577,7 +593,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2019/04/10/计算广告/广告名词解释-Ad_Exchange/" class="post-title-link" itemprop="url">广告名词解释-Ad Exchange</a>
+                <a href="/2019/05/20/Golang/进阶/读写文件/" class="post-title-link" itemprop="url">【Golang进阶】读写文件</a>
               
             
           </h1>
@@ -602,7 +618,197 @@
                 
               
 
-              <time title="创建时间：2019-04-10 18:00:08" itemprop="dateCreated datePublished" datetime="2019-04-10T18:00:08+08:00">2019-04-10</time>
+              <time title="创建时间：2019-05-20 11:19:08 / 修改时间：11:04:39" itemprop="dateCreated datePublished" datetime="2019-05-20T11:19:08+08:00">2019-05-20</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Golang/进阶/" itemprop="url" rel="index"><span itemprop="name">进阶</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2019/05/20/Golang/进阶/读写文件/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/05/20/Golang/进阶/读写文件/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    <div>
+      
+    </div>
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/05/20/每日一面/头条面试题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Craze lee">
+      <meta itemprop="description" content="做个有温度的人">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="念念不忘 必有回响">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/05/20/每日一面/头条面试题/" class="post-title-link" itemprop="url">未命名</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-20 10:31:35" itemprop="dateCreated datePublished" datetime="2019-05-20T10:31:35+08:00">2019-05-20</time>
             
 
             
@@ -619,29 +825,11 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-04-11 11:54:58" itemprop="dateModified" datetime="2019-04-11T11:54:58+08:00">2019-04-11</time>
+                <time title="修改时间：2019-05-21 23:50:23" itemprop="dateModified" datetime="2019-05-21T23:50:23+08:00">2019-05-21</time>
               
             
           </span>
 
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算广告/" itemprop="url" rel="index"><span itemprop="name">计算广告</span></a></span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -655,8 +843,8 @@
                 </span>
             
                 <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/04/10/计算广告/广告名词解释-Ad_Exchange/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/10/计算广告/广告名词解释-Ad_Exchange/" itemprop="commentCount"></span>
+                <a href="/2019/05/20/每日一面/头条面试题/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/05/20/每日一面/头条面试题/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -685,16 +873,13 @@
 
       
         
-          <h2 id="Ad-Exchange-广告交易平台"><a href="#Ad-Exchange-广告交易平台" class="headerlink" title="Ad Exchange (广告交易平台)"></a>Ad Exchange (广告交易平台)</h2><p><img src="/images/15548848497290.jpg" alt></p>
-          <!--noindex-->
           
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/04/10/计算广告/广告名词解释-Ad_Exchange/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
+            <p># </p>
+<p>来自<a href="https://www.v2ex.com/t/565577#reply9" target="_blank" rel="noopener">v2ex</a></p>
+<p>1.Redis 常见问题（ 100%）<br>数据结构，与 memcached 的区别，线程，io 多路复用（ select，poll，epoll ）<br>2.zookeeper （ 100%）<br>用法，分布式锁，zab 协议<br>3.MySQL 常见问题（ 100%）<br>存储引擎，锁，隔离级别<br>4.计算机网路（全程抱着电脑边查边问）：<br>tcp 四次挥手（简单的说了下 FIN 和 ACK ）<br>问什么时候关闭连接？ closewait 和 timedwaited 发生在哪里（一开始没说对，在引导下说出）</p>
+<p>tcp 和 UDP 的区别（ 100%）<br>网络分层每一层具体是什么（我回答没记住只记得最上层应用层，最下层物理层，HTTP→TCP/ UDP→IP ）<br>DNS 是什么（忘了，真忘了😂，我都佩服我自己这忘了）<br>什么是一条连接，如何确定一条连接（ emmm，根据连接 id ？被怼）<br>长连接和短连接的区别（不太了解）</p>
+
           
-          <!--/noindex-->
         
       
     </div>
@@ -717,6 +902,12 @@
     
 
     
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -753,7 +944,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/10/计算广告/广告名词解释-DMP/">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/05/18/Golang/零基础入门/07 Channel/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Craze lee">
@@ -773,7 +964,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2019/04/10/计算广告/广告名词解释-DMP/" class="post-title-link" itemprop="url">广告名词解释-DMP</a>
+                <a href="/2019/05/18/Golang/零基础入门/07 Channel/" class="post-title-link" itemprop="url">【Golang零基础入门】07 Channel</a>
               
             
           </h1>
@@ -798,7 +989,7 @@
                 
               
 
-              <time title="创建时间：2019-04-10 17:30:08" itemprop="dateCreated datePublished" datetime="2019-04-10T17:30:08+08:00">2019-04-10</time>
+              <time title="创建时间：2019-05-18 11:59:08" itemprop="dateCreated datePublished" datetime="2019-05-18T11:59:08+08:00">2019-05-18</time>
             
 
             
@@ -815,968 +1006,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-04-11 11:56:50" itemprop="dateModified" datetime="2019-04-11T11:56:50+08:00">2019-04-11</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算广告/" itemprop="url" rel="index"><span itemprop="name">计算广告</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-              
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-            
-                <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/04/10/计算广告/广告名词解释-DMP/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/10/计算广告/广告名词解释-DMP/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="DMP（Data-Management-Platform，数据管理平台）"><a href="#DMP（Data-Management-Platform，数据管理平台）" class="headerlink" title="DMP（Data-Management Platform，数据管理平台）"></a>DMP（Data-Management Platform，数据管理平台）</h2><p><img src="/images/15548869951068.jpg" alt></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/04/10/计算广告/广告名词解释-DMP/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    <div>
-      
-    </div>
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/10/计算广告/广告名词解释-SSP/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Craze lee">
-      <meta itemprop="description" content="做个有温度的人">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="念念不忘 必有回响">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/04/10/计算广告/广告名词解释-SSP/" class="post-title-link" itemprop="url">广告名词解释-SSP</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-10 17:00:08" itemprop="dateCreated datePublished" datetime="2019-04-10T17:00:08+08:00">2019-04-10</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-04-11 11:54:54" itemprop="dateModified" datetime="2019-04-11T11:54:54+08:00">2019-04-11</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算广告/" itemprop="url" rel="index"><span itemprop="name">计算广告</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-              
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-            
-                <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/04/10/计算广告/广告名词解释-SSP/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/10/计算广告/广告名词解释-SSP/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="SSP（Sell-Supply-Side-Platform）供应方平台"><a href="#SSP（Sell-Supply-Side-Platform）供应方平台" class="headerlink" title="SSP（Sell/Supply-Side Platform）供应方平台"></a>SSP（Sell/Supply-Side Platform）供应方平台</h2><p><img src="/images/15548837284764.jpg" alt></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/04/10/计算广告/广告名词解释-SSP/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    <div>
-      
-    </div>
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/10/计算广告/广告名词解释-DSP/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Craze lee">
-      <meta itemprop="description" content="做个有温度的人">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="念念不忘 必有回响">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/04/10/计算广告/广告名词解释-DSP/" class="post-title-link" itemprop="url">广告名词解释-DSP</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-10 16:00:08" itemprop="dateCreated datePublished" datetime="2019-04-10T16:00:08+08:00">2019-04-10</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-04-11 11:54:50" itemprop="dateModified" datetime="2019-04-11T11:54:50+08:00">2019-04-11</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算广告/" itemprop="url" rel="index"><span itemprop="name">计算广告</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-              
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-            
-                <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/04/10/计算广告/广告名词解释-DSP/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/10/计算广告/广告名词解释-DSP/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="DSP（Demand-Side-Platform）需求方平台"><a href="#DSP（Demand-Side-Platform）需求方平台" class="headerlink" title="DSP（Demand-Side Platform）需求方平台"></a>DSP（Demand-Side Platform）需求方平台</h2><p><img src="/images/15548816084888.jpg" alt></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/04/10/计算广告/广告名词解释-DSP/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    <div>
-      
-    </div>
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/10/计算广告/广告名词解释-RTB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Craze lee">
-      <meta itemprop="description" content="做个有温度的人">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="念念不忘 必有回响">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/04/10/计算广告/广告名词解释-RTB/" class="post-title-link" itemprop="url">广告名词解释-RTB</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-10 15:00:08" itemprop="dateCreated datePublished" datetime="2019-04-10T15:00:08+08:00">2019-04-10</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-04-11 11:54:48" itemprop="dateModified" datetime="2019-04-11T11:54:48+08:00">2019-04-11</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算广告/" itemprop="url" rel="index"><span itemprop="name">计算广告</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-              
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-            
-                <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/04/10/计算广告/广告名词解释-RTB/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/10/计算广告/广告名词解释-RTB/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="RTB（Real-Time-Bidding）实时竞价"><a href="#RTB（Real-Time-Bidding）实时竞价" class="headerlink" title="RTB（Real Time Bidding）实时竞价"></a>RTB（Real Time Bidding）实时竞价</h2><p><img src="/images/15548791103500.jpg" alt></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/04/10/计算广告/广告名词解释-RTB/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    <div>
-      
-    </div>
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/03/30/Business/management/Principles of management-02/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Craze lee">
-      <meta itemprop="description" content="做个有温度的人">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="念念不忘 必有回响">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/03/30/Business/management/Principles of management-02/" class="post-title-link" itemprop="url">Principles of management</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-03-30 09:00:00" itemprop="dateCreated datePublished" datetime="2019-03-30T09:00:00+08:00">2019-03-30</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-04-10 14:25:31" itemprop="dateModified" datetime="2019-04-10T14:25:31+08:00">2019-04-10</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Business/" itemprop="url" rel="index"><span itemprop="name">Business</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-              
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-            
-                <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/03/30/Business/management/Principles of management-02/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/03/30/Business/management/Principles of management-02/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    <div>
-      
-    </div>
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/03/20/Golang/零基础入门/05 接口/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Craze lee">
-      <meta itemprop="description" content="做个有温度的人">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="念念不忘 必有回响">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/03/20/Golang/零基础入门/05 接口/" class="post-title-link" itemprop="url">【Golang零基础入门】05 接口</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-03-20 11:59:08 / 修改时间：15:12:40" itemprop="dateCreated datePublished" datetime="2019-03-20T11:59:08+08:00">2019-03-20</time>
-            
-
-            
-              
-
+                <time title="修改时间：2019-05-20 10:56:58" itemprop="dateModified" datetime="2019-05-20T10:56:58+08:00">2019-05-20</time>
               
             
           </span>
@@ -1819,8 +1049,8 @@
                 </span>
             
                 <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/03/20/Golang/零基础入门/05 接口/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/03/20/Golang/零基础入门/05 接口/" itemprop="commentCount"></span>
+                <a href="/2019/05/18/Golang/零基础入门/07 Channel/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/05/18/Golang/零基础入门/07 Channel/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1849,20 +1079,461 @@
 
       
         
-          <h2 id="什么是接口"><a href="#什么是接口" class="headerlink" title="什么是接口"></a>什么是接口</h2><ul>
-<li>接口是行为方法的抽象与概括</li>
-<li>接口只有方法声明，不用和实现的细节绑定在一起，也没有数据字段</li>
-<li>接口是隐式实现的，只要某个类型拥有该接口的<strong>所有方法</strong>，就算是接口实现，无需像其他语言里的implements显示声明</li>
+          
+            <p>channel 是goroutine的通道，所以不能直接在非goroutine里直接进行操作，否则会报错，例如</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">c := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line">c &lt;- <span class="number">1</span></span><br><span class="line"></span><br><span class="line">fatal error: all goroutines are asleep - deadlock!</span><br></pre></td></tr></table></figure>
+<p><img src="/images/15580754924265.jpg" alt></p>
+<p>var i chan int // 双向channel</p>
+<p>var i chan&lt;- int // 单向，只能收数据<br>i &lt;- 1 // 这是允许的<br>j &lt;- i // 这是不允许的</p>
+<p>var i &lt;-chan int // 单向，只能发数据</p>
+<h3 id="buffer-channel"><a href="#buffer-channel" class="headerlink" title="buffer channel"></a>buffer channel</h3><p>buffer可以减少goroutine的切换，例如下面，创建了3buffer的channel，在往channel写数据时，前3个写入都是会存储到buffer，但是写第4个的时候，会发现报错，<code>fatal error: all goroutines are asleep - deadlock!</code>，因为buffer已满，没有goroutine处理该channel数据。所以如果是没有buffer的channel，每次写入都会有一次goroutine的切换。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">bufferChannel</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	c := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">3</span>) <span class="comment">// 创建带有3 buffer的channel</span></span><br><span class="line">	c &lt;- <span class="string">'a'</span></span><br><span class="line">	c &lt;- <span class="string">'b'</span></span><br><span class="line">	c &lt;- <span class="string">'c'</span></span><br><span class="line">	<span class="comment">//c &lt;- 'd'             // 取消注释后会报错，因为没有接受处理channel的方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="channel-close"><a href="#channel-close" class="headerlink" title="channel close"></a>channel close</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(c <span class="keyword">chan</span> <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> n := <span class="keyword">range</span> c &#123;</span><br><span class="line">		fmt.Printf(<span class="string">"received %c\n"</span>, n)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">closeDemo</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	c := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">3</span>)</span><br><span class="line">	<span class="keyword">go</span> worker(c)</span><br><span class="line">	c &lt;- <span class="string">'a'</span></span><br><span class="line">	c &lt;- <span class="string">'b'</span></span><br><span class="line">	c &lt;- <span class="string">'c'</span></span><br><span class="line">	<span class="built_in">close</span>(c)     <span class="comment">// 主动关闭channel，如果不主动关闭，goroutine会一直收数据</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不要通过共享内存来通信，通过通信来共享内存</p>
+<p>这篇<a href="https://blog.golang.org/share-memory-by-communicating" target="_blank" rel="noopener">文章</a>里面说的比较清楚了，使用共享内存的话在多线程的场景下为了处理竞态，需要加锁，使用起来比较麻烦。另外使用过多的锁，容易使得程序的代码逻辑坚涩难懂，并且容易使程序死锁，死锁了以后排查问题相当困难，特别是很多锁同时存在的时候。</p>
+<p>go语言的channel保证同一个时间只有一个goroutine能够访问里面的数据，为开发者提供了一种优雅简单的工具，所以go原生的做法就是使用channle来通信，而不是使用共享内存来通信。</p>
+<p><a href="http://legendtkl.com/2017/07/30/understanding-golang-channel/" target="_blank" rel="noopener">http://legendtkl.com/2017/07/30/understanding-golang-channel/</a></p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    <div>
+      
+    </div>
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/05/16/php/垃圾回收GC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Craze lee">
+      <meta itemprop="description" content="做个有温度的人">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="念念不忘 必有回响">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/05/16/php/垃圾回收GC/" class="post-title-link" itemprop="url">【PHP】垃圾回收GC</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-16 11:59:08 / 修改时间：11:16:15" itemprop="dateCreated datePublished" datetime="2019-05-16T11:59:08+08:00">2019-05-16</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/PHP/" itemprop="url" rel="index"><span itemprop="name">PHP</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2019/05/16/php/垃圾回收GC/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/05/16/php/垃圾回收GC/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="垃圾回收是什么"><a href="#垃圾回收是什么" class="headerlink" title="垃圾回收是什么"></a>垃圾回收是什么</h2><p>写了这么多年的PHP，你还不知道它的垃圾回收机制？不怕自己被回收了吗？</p>
+<p>我觉得你得有匠(降)心(薪)精神啊。</p>
+<p><img src="/images/15579764803661.jpg" alt="-w419"></p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    <div>
+      
+    </div>
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/05/14/MySQL/MySQL索引/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Craze lee">
+      <meta itemprop="description" content="做个有温度的人">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="念念不忘 必有回响">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/05/14/MySQL/MySQL索引/" class="post-title-link" itemprop="url">【MySQL 原理】02 索引原理与实现（一）</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-14 10:59:08" itemprop="dateCreated datePublished" datetime="2019-05-14T10:59:08+08:00">2019-05-14</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-05-22 16:03:58" itemprop="dateModified" datetime="2019-05-22T16:03:58+08:00">2019-05-22</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/MySQL/原理分析/" itemprop="url" rel="index"><span itemprop="name">原理分析</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2019/05/14/MySQL/MySQL索引/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/05/14/MySQL/MySQL索引/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><img src="/images/15585091314805.jpg" alt></p>
+<p>讲到索引，第一反应肯定是能提高查询效率。例如书的目录，想要查找某一章节，会先从目录中定位。如果没有目录，那么就需要将所有内容都看一遍才能找到。</p>
+<p>索引的设计对程序的性能至关重要，若索引太少，对查询性能受影响；而如果索引太多，则会影响增/改/删等的性能。</p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>MySQL中一般支持以下几种常见的索引：</p>
+<ul>
+<li>B+树索引</li>
+<li>全文索引</li>
+<li>哈希索引</li>
 </ul>
-          <!--noindex-->
+<p>我们今天重点来讲下B+树索引，以及为什么要用B+树来作为索引的数据结构。</p>
+<p><strong>B+树索引并不能直接找到具体的行，只是找到被查找行所在的页，然后DB通过把整页读入内存，再在内存中查找。</strong></p>
+<h2 id="一、基础知识"><a href="#一、基础知识" class="headerlink" title="一、基础知识"></a>一、基础知识</h2><h3 id="哈希结构"><a href="#哈希结构" class="headerlink" title="哈希结构"></a>哈希结构</h3><p>如有 3、1、2、10、9、0、4、6这8个数据，建立如<code>图1-1</code>所示哈希索引。</p>
+<ul>
+<li><p><strong>直接查询</strong>：现在要从8个数中查找6这条记录，只需要计算6的哈希值，便可快速定位记录，时间复杂度为O(1)。</p>
+</li>
+<li><p><strong>范围查询</strong>：如果要进行范围查询（大于4的数据），那这个索引就完全没用了。</p>
+</li>
+</ul>
+<p><img src="/images/15584550382791.jpg" alt><br>图1-1 哈希索引</p>
+<h3 id="1-2-二叉树查找树"><a href="#1-2-二叉树查找树" class="headerlink" title="1.2 二叉树查找树"></a>1.2 二叉树查找树</h3><p><strong>二叉树是一种经典的数据结构，要求左子树小于根节点，右子树大于根节点。</strong></p>
+<p>如有 3、1、2、10、9、0、4、6这8个数据，建立如<code>图1-2</code>所示二分查找树。</p>
+<ul>
+<li><p><strong>直接查询</strong>：假设查找键值为6的记录，先找到根4，4&lt;6，因此查找4的右子树，找到9；9大于6，因此查找9的左子树；一共查找3次。但如果顺序查找，则需要查找8次（位于最后）。</p>
+</li>
+<li><p><strong>范围查询</strong>：如果需要查找大于4的数据，则遍历4的右子树就行了。</p>
+</li>
+</ul>
+<p><img src="/images/15584563529395.jpg" alt><br>图1-2 二叉查找树</p>
+<h3 id="1-3-平衡二叉树（AVL树）"><a href="#1-3-平衡二叉树（AVL树）" class="headerlink" title="1.3 平衡二叉树（AVL树）"></a>1.3 平衡二叉树（AVL树）</h3><p>按照二叉查找树的定义，它是可以任意的构造，同样是这些数字，可以按照<code>图1-3-1</code>的方式来建立二叉查找树。同样查找数据6，需要查找5次。</p>
+<p><img src="/images/15584571689175.jpg" alt><br>图1-3-1 性能较差的二叉查找树</p>
+<p>因此为了最大性能地构造一个二叉查找树，需要它是平衡的，即平衡二叉树。</p>
+<p><strong>平衡二叉树定义：首先符合二叉查找树的定义，另外任何节点的两个子树高度最大差为1。</strong></p>
+<p>平衡二叉树的查询速度是很快的，但是有缺点：</p>
+<ol>
+<li>维护树的代价是非常大，在进行插入或更新时，经常会需要多次左旋或右旋来维持平衡。如<code>图1-3-2</code>所示</li>
+<li>数据量多的时候，树会很高，需要多次I/O操作。</li>
+<li>在进行范围查找时，假设查找&gt;=3，先找到3，然后需要查找到3的父节点，然后遍历父节点的右子树。</li>
+</ol>
+<p><img src="/images/May-22-2019%2014-27-44%E7%9A%84%E5%89%AF%E6%9C%AC.gif" alt="May-22-2019 14-27-44的副本"><br>图1-3-2 平衡二叉树AVL</p>
+<h3 id="1-4-B-树"><a href="#1-4-B-树" class="headerlink" title="1.4 B+ 树"></a>1.4 B+ 树</h3><p>在B+树中，所有记录节点存放在叶子节点上，且是<strong>顺序存放</strong>，由各叶子节点指针进行连接。如果从最左边的叶子节点开始顺序遍历，能得到所有键值的顺序排序。</p>
+<p>如有 3、1、2、10、9、0、4、6这8个数据，可建立如图1-4-1所示高度为2的B+树。</p>
+<p><img src="/images/15584585859142.jpg" alt><br>图1-4-1 高度为2的B+树</p>
+<p>在进行更新时，B+树同样需要类似二叉树的旋转操作。举例，假设新增一个7，那可以直接填充到4、6的后面。如果再添加8，那么就需要进行旋转了，感受下面的B+树旋转过程。</p>
+<p><img src="/images/15585072716707.gif" alt><br>图1-4-2 高度为3的B+树</p>
+<p>采用B+树的索引结构优点：</p>
+<ol>
+<li>B+树的高度一般为2-4层，所以查找记录时最多只需要2-4次IO，相对二叉平衡树已经大大降低了。</li>
+<li>范围查找时，能通过叶子节点的指针获取数据。例如查找大于等于3的数据，当在叶子节点中查到3时，通过3的尾指针便能获取所有数据，而不需要再像二叉树一样再获取到3的父节点。</li>
+</ol>
+<p>看到这应该明白mysql索引为什么使用B+树了吧！！！</p>
+<p>未完待续</p>
+
           
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/03/20/Golang/零基础入门/05 接口/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
         
       
     </div>
@@ -1885,6 +1556,12 @@
     
 
     
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -1921,7 +1598,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/03/19/Golang/零基础入门/04 函数/">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/05/06/Golang/进阶/flag包使用/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Craze lee">
@@ -1941,7 +1618,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2019/03/19/Golang/零基础入门/04 函数/" class="post-title-link" itemprop="url">【Golang零基础入门】04 函数与方法</a>
+                <a href="/2019/05/06/Golang/进阶/flag包使用/" class="post-title-link" itemprop="url">【Golang进阶】flag 命令行包使用</a>
               
             
           </h1>
@@ -1966,7 +1643,217 @@
                 
               
 
-              <time title="创建时间：2019-03-19 16:59:08" itemprop="dateCreated datePublished" datetime="2019-03-19T16:59:08+08:00">2019-03-19</time>
+              <time title="创建时间：2019-05-06 11:19:08 / 修改时间：12:05:18" itemprop="dateCreated datePublished" datetime="2019-05-06T11:19:08+08:00">2019-05-06</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Golang/进阶/" itemprop="url" rel="index"><span itemprop="name">进阶</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2019/05/06/Golang/进阶/flag包使用/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/05/06/Golang/进阶/flag包使用/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Package-flag"><a href="#Package-flag" class="headerlink" title="Package flag"></a>Package flag</h2><p>import “flag”</p>
+<p>flag 包实现命令行标签解析.</p>
+<h3 id="简单Demo"><a href="#简单Demo" class="headerlink" title="简单Demo"></a>简单Demo</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"flag"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> num = flag.Int(<span class="string">"num"</span>, <span class="number">1234</span>, <span class="string">"Input your ip"</span>)</span><br><span class="line"><span class="keyword">var</span> config = flag.String(<span class="string">"config"</span>, <span class="string">"default.conf"</span>, <span class="string">"Input your config file path"</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	flag.Parse()</span><br><span class="line">	fmt.Println(<span class="string">"ip has value "</span>, *num)</span><br><span class="line">	fmt.Println(<span class="string">"config file path "</span>, *config)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="像Linux命令行一样查看帮助"><a href="#像Linux命令行一样查看帮助" class="headerlink" title="像Linux命令行一样查看帮助"></a>像Linux命令行一样查看帮助</h3><p><img src="/images/15571147642900.jpg" alt></p>
+<h3 id="执行时不带参数，使用默认值"><a href="#执行时不带参数，使用默认值" class="headerlink" title="执行时不带参数，使用默认值"></a>执行时不带参数，使用默认值</h3><p><img src="/images/15571146629388.jpg" alt></p>
+<h3 id="执行时赋值参数"><a href="#执行时赋值参数" class="headerlink" title="执行时赋值参数"></a>执行时赋值参数</h3><p><img src="/images/15571147081513.jpg" alt></p>
+<h3 id="使用说明："><a href="#使用说明：" class="headerlink" title="使用说明："></a>使用说明：</h3><ol>
+<li>定义标签</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义interger标签</span></span><br><span class="line"><span class="keyword">var</span> num = flag.Int(<span class="string">"num"</span>, <span class="number">1234</span>, <span class="string">"Input your ip"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义string标签</span></span><br><span class="line"><span class="keyword">var</span> config = flag.String(<span class="string">"config"</span>, <span class="string">"default.conf"</span>, <span class="string">"Input your config file path"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Var()函数将标签绑定到指定变量中</span></span><br><span class="line"><span class="keyword">var</span> flagvar <span class="keyword">int</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">InitFlag</span><span class="params">()</span></span> &#123;</span><br><span class="line">	flag.IntVar(&amp;flagvar, <span class="string">"flagvar"</span>, <span class="number">1234</span>, <span class="string">"Input your flagvar name"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>解析参数</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag.Parse()</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>使用标签</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(&quot;ip has value &quot;, *num)</span><br><span class="line">fmt.Println(&quot;config file path &quot;, *config)</span><br></pre></td></tr></table></figure>
+<h3 id="经验"><a href="#经验" class="headerlink" title="经验"></a>经验</h3><p>在开发的时候，很多时候会有多个环境，基本会以这种方式去加载对应环境的配置文件</p>
+<h3 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h3><p><a href="https://godoc.org/flag" target="_blank" rel="noopener">https://godoc.org/flag</a></p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    <div>
+      
+    </div>
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/05/04/Golang/Gopher分享/Gopher China 2016/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Craze lee">
+      <meta itemprop="description" content="做个有温度的人">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="念念不忘 必有回响">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/05/04/Golang/Gopher分享/Gopher China 2016/" class="post-title-link" itemprop="url">Gopher China 2016</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-04 23:17:08" itemprop="dateCreated datePublished" datetime="2019-05-04T23:17:08+08:00">2019-05-04</time>
             
 
             
@@ -1983,7 +1870,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-03-20 10:42:40" itemprop="dateModified" datetime="2019-03-20T10:42:40+08:00">2019-03-20</time>
+                <time title="修改时间：2019-05-05 00:15:06" itemprop="dateModified" datetime="2019-05-05T00:15:06+08:00">2019-05-05</time>
               
             
           </span>
@@ -2007,7 +1894,7 @@
                   ，
                 
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Golang/零基础入门/" itemprop="url" rel="index"><span itemprop="name">零基础入门</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Golang/Gopher/" itemprop="url" rel="index"><span itemprop="name">Gopher</span></a></span>
 
                 
                 
@@ -2026,8 +1913,8 @@
                 </span>
             
                 <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/03/19/Golang/零基础入门/04 函数/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/03/19/Golang/零基础入门/04 函数/" itemprop="commentCount"></span>
+                <a href="/2019/05/04/Golang/Gopher分享/Gopher China 2016/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/05/04/Golang/Gopher分享/Gopher China 2016/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -2056,17 +1943,12 @@
 
       
         
-          <h2 id="纯函数"><a href="#纯函数" class="headerlink" title="纯函数"></a>纯函数</h2><p>独立存在，不依附于任何实体，没有接收者</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> helper</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">SayHi</span><span class="params">(name <span class="keyword">string</span>)</span></span>  &#123;</span><br><span class="line">	fmt.Printf(<span class="string">"Hi %s"</span>, name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
           
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/03/19/Golang/零基础入门/04 函数/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
+            <h2 id="Why-Go"><a href="#Why-Go" class="headerlink" title="Why Go"></a>Why Go</h2><p>gofmt 团队代码风格一致<br>强类型语言，任何严肃的项目都不应该用弱类型语言<br>import 很好的开源协同开发<br>profile 能力强大<br>build standalone binary 简单部署<br>goroutines 提供天然的并发编程<br>微服务最好的语言：native web框架、gRPC、docker</p>
+<h2 id="GC-优化思路"><a href="#GC-优化思路" class="headerlink" title="GC 优化思路"></a>GC 优化思路</h2><p>Mark and Sweep: 大量时间用于扫描对象</p>
+<p>常规手段的核心：<strong>减少对象</strong></p>
+
           
-          <!--/noindex-->
         
       
     </div>
@@ -2089,6 +1971,12 @@
     
 
     
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -2125,7 +2013,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/03/19/Golang/零基础入门/03 数据类型/">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/05/04/Golang/Gopher分享/GopherChina大会视频大全/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Craze lee">
@@ -2145,7 +2033,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2019/03/19/Golang/零基础入门/03 数据类型/" class="post-title-link" itemprop="url">【Golang零基础入门】03 数据类型</a>
+                <a href="/2019/05/04/Golang/Gopher分享/GopherChina大会视频大全/" class="post-title-link" itemprop="url">Gopher China 大会视频</a>
               
             
           </h1>
@@ -2170,12 +2058,227 @@
                 
               
 
-              <time title="创建时间：2019-03-19 14:59:08 / 修改时间：16:36:04" itemprop="dateCreated datePublished" datetime="2019-03-19T14:59:08+08:00">2019-03-19</time>
+              <time title="创建时间：2019-05-04 13:12:08" itemprop="dateCreated datePublished" datetime="2019-05-04T13:12:08+08:00">2019-05-04</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-05-05 09:58:52" itemprop="dateModified" datetime="2019-05-05T09:58:52+08:00">2019-05-05</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Golang/Gopher/" itemprop="url" rel="index"><span itemprop="name">Gopher</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2019/05/04/Golang/Gopher分享/GopherChina大会视频大全/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/05/04/Golang/Gopher分享/GopherChina大会视频大全/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><a href="https://segmentfault.com/a/1190000018560530" target="_blank" rel="noopener">https://segmentfault.com/a/1190000018560530</a></p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    <div>
+      
+    </div>
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://craze-lee.github.io/2019/04/20/Golang/零基础入门/06 Goroutine/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Craze lee">
+      <meta itemprop="description" content="做个有温度的人">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="念念不忘 必有回响">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/04/20/Golang/零基础入门/06 Goroutine/" class="post-title-link" itemprop="url">【Golang零基础入门】06 Goroutine</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-20 11:59:08" itemprop="dateCreated datePublished" datetime="2019-04-20T11:59:08+08:00">2019-04-20</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-05-20 16:43:23" itemprop="dateModified" datetime="2019-05-20T16:43:23+08:00">2019-05-20</time>
               
             
           </span>
@@ -2218,8 +2321,8 @@
                 </span>
             
                 <span class="post-meta-item-text">评论数：</span>
-                <a href="/2019/03/19/Golang/零基础入门/03 数据类型/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/03/19/Golang/零基础入门/03 数据类型/" itemprop="commentCount"></span>
+                <a href="/2019/04/20/Golang/零基础入门/06 Goroutine/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/20/Golang/零基础入门/06 Goroutine/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -2248,20 +2351,46 @@
 
       
         
-          <h2 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h2><h3 id="整型"><a href="#整型" class="headerlink" title="整型"></a>整型</h3><p>有符号类型：int8、int16、int32、int64，分别对应8、16、32、64bit大小</p>
-<p>无符号类型：uint8、uint16、uint32、uint64</p>
-<h3 id="浮点数与复数"><a href="#浮点数与复数" class="headerlink" title="浮点数与复数"></a>浮点数与复数</h3><p>float32和float64</p>
-<p>两种精度的复数类型：complex64和complex128，分别对应float32和float64两种浮点数精度。</p>
-<h3 id="布尔型"><a href="#布尔型" class="headerlink" title="布尔型"></a>布尔型</h3><p>true和false</p>
-          <!--noindex-->
           
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/03/19/Golang/零基础入门/03 数据类型/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
+            <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>现在很多一线大厂都转型到Go，究其原因就是该语言对并发支持的好。<br>相信大家都知道Golang是在语言级原生支持协程，先看看下面这段代码</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	<span class="keyword">for</span> i:=<span class="number">0</span>; i&lt;<span class="number">10</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(i <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">			<span class="keyword">for</span> &#123;</span><br><span class="line">				fmt.Printf(<span class="string">"协程: %d \n"</span>, i)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;(i)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 防止程序来不及打印就退出</span></span><br><span class="line">	time.Sleep(<span class="number">10</span>*time.Microsecond)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果如下，你会发现每次运行，输出内容都是不一样的，这是为什么呢？<br><img src="/images/15580611789492.jpg" alt></p>
+<h2 id="一、并行与并发"><a href="#一、并行与并发" class="headerlink" title="一、并行与并发"></a>一、并行与并发</h2><p>并行是指程序的运行状态，要有两个线程正在执行才能算是Parallelism；</p>
+<p>并发指程序的逻辑结构，Concurrency则只要有两个以上线程还在执行过程中即可。</p>
+<p>简单地说，Parallelism要在多核或者多处理器情况下才能做到，而Concurrency则不需要。<br>对应后面的runtime.GOMAXPROCS(runtime.NumCPU())</p>
+<h2 id="二、进程，线程与协程"><a href="#二、进程，线程与协程" class="headerlink" title="二、进程，线程与协程"></a>二、进程，线程与协程</h2><p>goroutines是Go的并发基础，为了帮助我们理解这个概念，我们先来谈一谈并发的发展故事。</p>
+<h3 id="2-1-进程-Process"><a href="#2-1-进程-Process" class="headerlink" title="2.1 进程 Process"></a>2.1 进程 Process</h3><p>进程是程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是线程的容器。</p>
+<p>在分时系统中，操作系统通过记录当前进程的状态，然后恢复另一个进程的状态，在活动进程之间快速切换CPU的处理，而产生了一种并发执行的错觉，这个过程称为上下文切换(switch cost)。</p>
+<p>上下文切换的成本是：</p>
+<ul>
+<li>内核需要<strong>存储该进程的所有CPU寄存器的内容</strong>，然后恢复另一个进程的值。由于进程切换可以在进程执行的任何时刻发生，操作系统需要存储所有这些寄存器的内容，因为它不知道当前正在使用哪些寄存器。</li>
+<li>内核需要将CPU的虚拟地址刷新为物理地址映射（TLB缓存）。</li>
+<li>操作系统上下文切换的开销，以及选择下一个进程都会占用CPU的调度程序函数的开销。</li>
+</ul>
+<h3 id="2-2-线程-thread"><a href="#2-2-线程-thread" class="headerlink" title="2.2 线程 thread"></a>2.2 线程 thread</h3><p>线程是操作系统能够进行运算调度的最小单位，在概念上与进程类似，但共享相同的内存空间。由于线程共享地址空间，因此创建、切换速度更快。但仍然有昂贵的上下文切换成本; 必须保留很多状态。</p>
+<h3 id="2-3-协程-Coroutine"><a href="#2-3-协程-Coroutine" class="headerlink" title="2.3 协程 Coroutine"></a>2.3 协程 Coroutine</h3><p>协程是用户态线程，不依靠内核来管理调度，具备以下特点：</p>
+<ul>
+<li>轻量级线程</li>
+<li><strong>非抢占式</strong>多任务处理，由协程自己本省主动交出控制权</li>
+</ul>
+<p>以下列出了goroutine之间切换的主要的时间点：</p>
+<p>（1）Channel发送和接收操作（如果这些操作是阻塞的）；<br>（2）执行go语句，虽然不能保证新的goroutine马上被调度执行；<br>（3）阻塞的系统调用，像文件操作，网络操作，IO等等；<br>（4）停下来进入垃圾回收周期以后。</p>
+<p>换句话讲，在goroutine不能继续进行运算以后（需要更多数据，更多空间，等等），都会进行切换。</p>
+<p><img src="/images/15580000648103.jpg" alt><br>双向通道就是channel</p>
+<h2 id="GO的协程-Goroutines"><a href="#GO的协程-Goroutines" class="headerlink" title="GO的协程 Goroutines"></a>GO的协程 Goroutines</h2><p>每个并发的执行单元叫做goroutine，用关键词go来创建。<br>具体goroutine放在哪个线程，由调度器控制与切换。</p>
+<p><img src="/images/15580002215535.jpg" alt></p>
+<p>假设要计算两个非常复杂的逻辑，然后输出结果。在正常是线性程序里面，会依次调用计算的逻辑，完成之后再调用输出逻辑。但如果是在有两个甚至更多个goroutine的程序中，对两个计算逻辑的调用就可以在同一时间。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">	wg.Add(<span class="number">2</span>)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> i:=<span class="number">0</span>; i&lt;<span class="number">100</span>; i++ &#123;</span><br><span class="line">			<span class="keyword">defer</span> wg.Done()</span><br><span class="line">			fmt.Println(<span class="string">"A:"</span>, i)</span><br><span class="line">			time.Sleep(<span class="number">1</span>*time.Second)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> i:=<span class="number">0</span>; i&lt;<span class="number">100</span>; i++ &#123;</span><br><span class="line">			<span class="keyword">defer</span> wg.Done()</span><br><span class="line">			fmt.Println(<span class="string">"B:"</span>, i)</span><br><span class="line">			time.Sleep(<span class="number">2</span>*time.Second)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line">	wg.Wait()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们运行这个程序，会发现A和B前缀会交叉出现，即两个程序是并发在执行的，并且每次运行的结果可能不一样，这就是Go调度器调度的结果。</p>
+<p><img src="/images/15577141931482.jpg" alt></p>
+<p>这里的sync.WaitGroup其实是一个计数的信号量，使用它的目的是要main函数等待两个goroutine执行完成后再结束，不然这两个goroutine还在运行的时候，程序就结束了，看不到想要的结果。</p>
+<p>sync.WaitGroup的使用也非常简单，先是使用Add 方法设设置计算器为2，每一个goroutine的函数执行完之后，就调用Done方法减1。Wait方法的意思是如果计数器大于0，就会阻塞，所以main 函数会一直等待2个goroutine完成后，再结束。</p>
+<p>对于逻辑处理器的个数，不是越多越好，要根据电脑的实际物理核数，如果不是多核的，设置再多的逻辑处理器个数也没用，如果需要设置的话，一般我们采用如下代码设置。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">runtime.GOMAXPROCS(runtime.NumCPU())</span><br></pre></td></tr></table></figure>
+<p>所以对于并发来说，就是Go语言本身自己实现的调度，对于并行来说，是和运行的电脑的物理处理器的核数有关的，多核就可以并行并发，单核只能并发了。</p>
+<p><img src="/images/15580736903768.jpg" alt></p>
+
           
-          <!--/noindex-->
         
       
     </div>
@@ -2284,6 +2413,12 @@
     
 
     
+
+    <! -- 添加微信图标 -->
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -2309,7 +2444,7 @@
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2354,7 +2489,7 @@
                 
                   <a href="/archives">
                 
-                    <span class="site-state-item-count">22</span>
+                    <span class="site-state-item-count">35</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2391,7 +2526,13 @@
                     
                       
                     
-                    <span class="site-state-item-count">12</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">15</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -2430,7 +2571,13 @@
                     
                       
                     
-                    <span class="site-state-item-count">13</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
