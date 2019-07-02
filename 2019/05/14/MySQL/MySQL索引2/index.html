@@ -96,13 +96,13 @@
 
 
 
-  <meta name="description" content="回顾 上一篇文章《MySQL索引为什么要用B+树》讲了MySQL为什么选择用B+树来作为底层存储，提了两个知识点：  B+树索引并不能直接找到行，只是找到行所在的页，通过把整页读入内存，再在内存中查找。 索引的B+树高度一般为2-4层，查找记录时最多只需要2-4次IO。  为了进一步理解，今天来聊聊B+数索引在物理存储上是怎样设计的。 一、理解为什么要减少磁盘IO次数众所周知，MySQL的数据实际">
+  <meta name="description" content="回顾 上一篇文章《MySQL索引为什么要用B+树》讲了MySQL为什么选择用B+树来作为底层存储结构，提了两个知识点：  B+树索引并不能直接找到行，只是找到行所在的页，通过把整页读入内存，再在内存中查找。 索引的B+树高度一般为2-4层，查找记录时最多只需要2-4次IO。  为进一步知其所以然，今天来聊聊B+树索引在物理磁盘上是怎么设计存储的。 一、理解为什么要减少磁盘IO次数众所周知，MySQ">
 <meta name="keywords" content="MySQL,原理分析">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【MySQL 原理】02 索引原理与实现（二）">
 <meta property="og:url" content="http://craze-lee.github.io/2019/05/14/MySQL/MySQL索引2/index.html">
 <meta property="og:site_name" content="念念不忘 必有回响">
-<meta property="og:description" content="回顾 上一篇文章《MySQL索引为什么要用B+树》讲了MySQL为什么选择用B+树来作为底层存储，提了两个知识点：  B+树索引并不能直接找到行，只是找到行所在的页，通过把整页读入内存，再在内存中查找。 索引的B+树高度一般为2-4层，查找记录时最多只需要2-4次IO。  为了进一步理解，今天来聊聊B+数索引在物理存储上是怎样设计的。 一、理解为什么要减少磁盘IO次数众所周知，MySQL的数据实际">
+<meta property="og:description" content="回顾 上一篇文章《MySQL索引为什么要用B+树》讲了MySQL为什么选择用B+树来作为底层存储结构，提了两个知识点：  B+树索引并不能直接找到行，只是找到行所在的页，通过把整页读入内存，再在内存中查找。 索引的B+树高度一般为2-4层，查找记录时最多只需要2-4次IO。  为进一步知其所以然，今天来聊聊B+树索引在物理磁盘上是怎么设计存储的。 一、理解为什么要减少磁盘IO次数众所周知，MySQ">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://craze-lee.github.io/images/15591512591297.jpg">
 <meta property="og:image" content="http://craze-lee.github.io/images/15590347312230.jpg">
@@ -111,10 +111,10 @@
 <meta property="og:image" content="http://craze-lee.github.io/images/15591514677014.gif">
 <meta property="og:image" content="http://craze-lee.github.io/images/15591491067624.jpg">
 <meta property="og:image" content="http://craze-lee.github.io/images/%E6%87%82%E4%BA%86%E5%90%97.jpg">
-<meta property="og:updated_time" content="2019-05-29T17:49:19.439Z">
+<meta property="og:updated_time" content="2019-05-29T18:02:47.427Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【MySQL 原理】02 索引原理与实现（二）">
-<meta name="twitter:description" content="回顾 上一篇文章《MySQL索引为什么要用B+树》讲了MySQL为什么选择用B+树来作为底层存储，提了两个知识点：  B+树索引并不能直接找到行，只是找到行所在的页，通过把整页读入内存，再在内存中查找。 索引的B+树高度一般为2-4层，查找记录时最多只需要2-4次IO。  为了进一步理解，今天来聊聊B+数索引在物理存储上是怎样设计的。 一、理解为什么要减少磁盘IO次数众所周知，MySQL的数据实际">
+<meta name="twitter:description" content="回顾 上一篇文章《MySQL索引为什么要用B+树》讲了MySQL为什么选择用B+树来作为底层存储结构，提了两个知识点：  B+树索引并不能直接找到行，只是找到行所在的页，通过把整页读入内存，再在内存中查找。 索引的B+树高度一般为2-4层，查找记录时最多只需要2-4次IO。  为进一步知其所以然，今天来聊聊B+树索引在物理磁盘上是怎么设计存储的。 一、理解为什么要减少磁盘IO次数众所周知，MySQ">
 <meta name="twitter:image" content="http://craze-lee.github.io/images/15591512591297.jpg">
 
 
@@ -441,7 +441,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-05-30 01:49:19" itemprop="dateModified" datetime="2019-05-30T01:49:19+08:00">2019-05-30</time>
+                <time title="修改时间：2019-05-30 02:02:47" itemprop="dateModified" datetime="2019-05-30T02:02:47+08:00">2019-05-30</time>
               
             
           </span>
@@ -521,12 +521,12 @@
 
       
         <h2 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h2><p><img src="/images/15591512591297.jpg" alt="w200"></p>
-<p>上一篇文章<a href="https://mp.weixin.qq.com/s/dhGAUs-S3RbBaOL2yxh1Iw" target="_blank" rel="noopener">《MySQL索引为什么要用B+树》</a>讲了MySQL为什么选择用B+树来作为底层存储，提了两个知识点：</p>
+<p>上一篇文章<a href="https://mp.weixin.qq.com/s/dhGAUs-S3RbBaOL2yxh1Iw" target="_blank" rel="noopener">《MySQL索引为什么要用B+树》</a>讲了MySQL为什么选择用B+树来作为底层存储结构，提了两个知识点：</p>
 <ol>
 <li>B+树索引并不能直接找到行，只是找到行所在的页，通过把整页读入内存，再在内存中查找。</li>
 <li>索引的B+树高度一般为2-4层，查找记录时最多只需要2-4次IO。</li>
 </ol>
-<p>为了进一步理解，今天来聊聊B+数索引在物理存储上是怎样设计的。</p>
+<p>为进一步知其所以然，今天来聊聊B+树索引在物理磁盘上是怎么设计存储的。</p>
 <h2 id="一、理解为什么要减少磁盘IO次数"><a href="#一、理解为什么要减少磁盘IO次数" class="headerlink" title="一、理解为什么要减少磁盘IO次数"></a>一、理解为什么要减少磁盘IO次数</h2><p>众所周知，MySQL的数据实际是存储在文件中，而磁盘IO的查找速度是要远小于内存速度的，所以减少磁盘IO的次数能很大程度的提高MySQL性能。</p>
 <h3 id="1-1-磁盘IO为什么慢"><a href="#1-1-磁盘IO为什么慢" class="headerlink" title="1.1 磁盘IO为什么慢"></a>1.1 磁盘IO为什么慢</h3><p>先温习下知识点：<strong>磁盘IO时间 = 寻道 + 磁盘旋转 + 数据传输时间</strong></p>
 <p>从磁盘读取数据时，系统会将逻辑地址发给磁盘，磁盘将逻辑地址转换为物理地址（哪个磁道，哪个扇区）。<br>磁头进行机械运动，先找到相应磁道，再找该磁道的对应扇区，扇区是磁盘的最小存储单元（见<code>图1-1</code>）。</p>
@@ -566,6 +566,7 @@
 <h3 id="2-2-非聚集索引（Secondary-indexes）"><a href="#2-2-非聚集索引（Secondary-indexes）" class="headerlink" title="2.2 非聚集索引（Secondary indexes）"></a>2.2 非聚集索引（Secondary indexes）</h3><p>非聚集索引又叫辅助索引，叶子节点并不包含行记录数据，而是存储了聚集索引键。</p>
 <p>根据示例数据（<code>idx_name</code>索引）构建如图2-2所示辅助索引：</p>
 <p><img src="/images/15591491067624.jpg" alt></p>
+<p>图2-2 B+树非聚集索引</p>
 <h4 id="2-2-1-知识点"><a href="#2-2-1-知识点" class="headerlink" title="2.2.1 知识点"></a>2.2.1 知识点</h4><ul>
 <li>每个表可以有多个辅助索引</li>
 <li>通过辅助索引查数据时，先查找辅助索引获得聚集索引的主键，然后通过主键索引来查找完整的行记录。</li>
@@ -606,7 +607,7 @@
   <p><span>本文标题:</span><a href="/2019/05/14/MySQL/MySQL索引2/">【MySQL 原理】02 索引原理与实现（二）</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Craze lee 的个人博客">Craze lee</a></p>
   <p><span>发布时间:</span>2019年05月14日 - 10:05</p>
-  <p><span>最后更新:</span>2019年05月30日 - 01:05</p>
+  <p><span>最后更新:</span>2019年05月30日 - 02:05</p>
   <p><span>原始链接:</span><a href="/2019/05/14/MySQL/MySQL索引2/" title="【MySQL 原理】02 索引原理与实现（二）">http://craze-lee.github.io/2019/05/14/MySQL/MySQL索引2/</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://craze-lee.github.io/2019/05/14/MySQL/MySQL索引2/" aria-label="复制成功！"></i></span>
   </p>
@@ -694,8 +695,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/05/14/MySQL/MySQL索引1/" rel="next" title="【MySQL 原理】02 索引原理与实现（一）">
-                <i class="fa fa-chevron-left"></i> 【MySQL 原理】02 索引原理与实现（一）
+              <a href="/2019/05/14/MySQL/事务的隔离级别/" rel="next" title="【MySQL 原理】03 事务的隔离级别">
+                <i class="fa fa-chevron-left"></i> 【MySQL 原理】03 事务的隔离级别
               </a>
             
           </div>
@@ -782,7 +783,7 @@
                 
                   <a href="/archives">
                 
-                    <span class="site-state-item-count">37</span>
+                    <span class="site-state-item-count">40</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -825,7 +826,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">15</span>
+                      
+                    
+                    <span class="site-state-item-count">16</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -870,7 +873,13 @@
                     
                       
                     
-                    <span class="site-state-item-count">16</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
